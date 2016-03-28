@@ -1,0 +1,210 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Sky_Material
+  m_Shader: {fileID: 4800000, guid: 5993f02525f039842bb6d9ae6b3c9fbd, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 1
+  m_CustomRenderQueue: 1000
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BumpMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailNormalMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ParallaxMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _OcclusionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _EmissionMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _DetailAlbedoMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _CloudTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 3dd3d64ec4198b248b20c8d805c649b6, type: 3}
+          m_Scale: {x: 2, y: 2}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _CloudTex1
+        second:
+          m_Texture: {fileID: 2800000, guid: 5729fe957c985c649994b0b1ed910979, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _CloudTex2
+        second:
+          m_Texture: {fileID: 2800000, guid: 3dd3d64ec4198b248b20c8d805c649b6, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _StartTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 3dd3d64ec4198b248b20c8d805c649b6, type: 3}
+          m_Scale: {x: 2, y: 2}
+          m_Offset: {x: 0, y: .0900000036}
+    m_Floats:
+      data:
+        first:
+          name: _SrcBlend
+        second: 1
+      data:
+        first:
+          name: _DstBlend
+        second: 0
+      data:
+        first:
+          name: _Cutoff
+        second: 35.1300011
+      data:
+        first:
+          name: _Parallax
+        second: .0199999996
+      data:
+        first:
+          name: _ZWrite
+        second: 1
+      data:
+        first:
+          name: _Glossiness
+        second: .5
+      data:
+        first:
+          name: _BumpScale
+        second: 1
+      data:
+        first:
+          name: _OcclusionStrength
+        second: 1
+      data:
+        first:
+          name: _DetailNormalMapScale
+        second: 1
+      data:
+        first:
+          name: _UVSec
+        second: 0
+      data:
+        first:
+          name: _Mode
+        second: 0
+      data:
+        first:
+          name: _Metallic
+        second: 0
+      data:
+        first:
+          name: _SunRadiusB
+        second: .0265999995
+      data:
+        first:
+          name: _SunRadiusA
+        second: .0397000015
+      data:
+        first:
+          name: _SunIntensity
+        second: .5
+    m_Colors:
+      data:
+        first:
+          name: _EmissionColor
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SkyColor
+        second: {r: .135110289, g: .324033469, b: .375, a: 1}
+      data:
+        first:
+          name: _CloudColor
+        second: {r: .250594735, g: .284370899, b: .33088237, a: 1}
+      data:
+        first:
+          name: _HorizonColor
+        second: {r: .138516441, g: .252445966, b: .308823526, a: 1}
+      data:
+        first:
+          name: _SkyTopColor
+        second: {r: .0567690171, g: .0647297353, b: .102941155, a: 1}
+      data:
+        first:
+          name: _SunSetColor
+        second: {r: .0858023316, g: .103614561, b: .16911763, a: 1}
+      data:
+        first:
+          name: _HorizonColor2
+        second: {r: .0808823705, g: .0303308889, b: .0303308889, a: 1}
+      data:
+        first:
+          name: _SkyColor2
+        second: {r: .0927768126, g: .214520857, b: .286764681, a: 1}
+      data:
+        first:
+          name: _SkyTopColor2
+        second: {r: .160088658, g: .291857332, b: .345588207, a: 1}
