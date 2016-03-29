@@ -46,6 +46,10 @@ public class T_SkillMgr : MonoBehaviour {
     {
         this.StartCoroutine(AfterDelayTimer(time));
     }
+    protected virtual void CoolTimeDelay()
+    {
+        this.StartCoroutine(CoolTimer(fCoolTime));
+    }
 
     protected virtual void SkillCancel()
     {
@@ -58,7 +62,10 @@ public class T_SkillMgr : MonoBehaviour {
     protected bool isAfterDelay() { return bAfterDelay; }
     protected bool isBeforeDelay() { return bBeforeDelay; }
     protected bool isAction() { return bAction; }
-    protected void setBeforeDelay(bool b) { bBeforeDelay = b; }
+    protected bool isCoolTime() { return bCoolTime; }
+
+    protected void setAction(bool b) { bAction = b; }
+    protected void setAfterDelay(bool b) { bAfterDelay = b; }
     protected void setCoolTime(float time) { fCoolTime = time; }
     protected T_Mgr getT_Mgr() { return T_Mgr.GetInstance(); }
     
@@ -95,7 +102,6 @@ public class T_SkillMgr : MonoBehaviour {
 
         T_Mgr.GetInstance().ChangeState(T_Mgr.State.idle);
         bCoolTime = true;
-        this.StartCoroutine(CoolTimer(fCoolTime));
     }
     IEnumerator CoolTimer(float time)
     {        

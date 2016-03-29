@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class T_Snipe : T_SkillMgr {
 
     public GameObject bulletPrefeb;
-    public List<GameObject> bulletPool = new List<GameObject>();
+    private GameObject bullet;
+    private ObjectPool bulletPool = new ObjectPool();
 
     private T_Mgr T_mgr;
     private RotationPivotOfCam rotationPivotOfCam;
@@ -23,12 +23,10 @@ public class T_Snipe : T_SkillMgr {
     private float fOriginFOV = 60.0f;
         
     private float fReach = 1000.0f;
-    //private bool bDelay = false;
-    //private float delayTime = 0.5f, delayTimer = 0.0f;
 
-    private float beforeDelayTime = 0.0f;
+    private float beforeDelayTime = 1.0f;
     private float actionTime = 100.0f;
-    private float afterDelayTime = 1.2f;
+    private float afterDelayTime = 1.0f;
     private float coolTime = 0.2f;
 
     private Ray fireRay;
@@ -45,14 +43,9 @@ public class T_Snipe : T_SkillMgr {
         camTr = Camera.main.transform;
         zoomTr = GameObject.FindGameObjectWithTag(Tags.CameraTarget).transform;
 
-        for (int i = 0; i < 5; i++)
-        {
-            GameObject bullet = (GameObject)Instantiate(bulletPrefeb);
+        bulletPool.CreatePool(bulletPrefeb, 5);
 
-            bullet.name = "SnipeBullet_" + i.ToString();
-            bullet.SetActive(false);
-            bulletPool.Add(bullet);
-        }
+        base.setCoolTime(coolTime);
     }
 	
 	void Update () {
@@ -61,6 +54,25 @@ public class T_Snipe : T_SkillMgr {
         Vector3 centerPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, 0.0f));
         //화면의 중앙에서 카메라의 정면방향으로 레이를 쏜다.
         fireRay = new Ray(centerPos, camTr.forward);
+
+        if (T_mgr.getState() == T_Mgr.State.be_Shot)
+            base.SkillCancel();
+
+        if (!base.isCoolTime())
+        {
+            if (Input.GetMouseButtonDown(1))
+                InputCommend(T_Mgr.SkillType.AP, iDecAP);
+            if (base.isBeforeDelay())
+                BeforeActionDelay(beforeDelayTime);
+            if (base.isAction())
+                Action(actionTime);
+            if (base.isAfterDelay())
+                AfterActionDelay(afterDelayTime);
+        }
+        else
+        {
+            CoolTimeDelay();
+        }
 
         if (bZoom)
         {
@@ -95,53 +107,17 @@ public class T_Snipe : T_SkillMgr {
                     }
                 }
                 //bDelay = true;
-                base.setBeforeDelay(true);
+                base.setAction(false);
+                base.setAfterDelay(true);
 
                 #region<투사체>
-                //투사체 오브젝트 풀 생성.
-                foreach (GameObject bullet in bulletPool)
-                {
-                    if (!bullet.activeSelf)
-                    {
-                        bullet.transform.position = zoomTr.position;
-                        bullet.transform.rotation = camTr.rotation;
-                        bullet.SetActive(true);
-                        break;
-                    }
-                }
+                bullet = bulletPool.UseObject();
+                bullet.transform.position = zoomTr.position;
+                bullet.transform.rotation = camTr.rotation;
+                bullet.SetActive(true);
                 #endregion
             }
         }
-
-        //if(bDelay)
-        //{
-        //    if(T_mgr.getState() == T_Mgr.State.Skill)
-        //    {
-        //        if (delayTimer > delayTime)
-        //        {
-        //            //좀더 나중 타이밍으로 옮겨야 할 듯.
-        //            T_mgr.ChangeState(T_Mgr.State.idle);
-        //            delayTimer = 0.0f;
-        //            bDelay = false;
-        //        }
-        //        else
-        //            delayTimer += Time.deltaTime;
-        //    }
-        //}
-
-        if (T_mgr.getState() == T_Mgr.State.be_Shot)
-        {
-            base.SkillCancel();
-        }
-
-        if (Input.GetMouseButtonDown(1))
-            InputCommend(T_Mgr.SkillType.AP, iDecAP);
-        if (base.isBeforeDelay())
-            BeforeActionDelay(beforeDelayTime);
-        if (base.isAction())
-            Action(actionTime);
-        if (base.isAfterDelay())
-            AfterActionDelay(afterDelayTime);
 
     }
 
@@ -152,11 +128,13 @@ public class T_Snipe : T_SkillMgr {
     protected override void BeforeActionDelay(float time)
     {
         print("선딜");
+        T_mgr.setCtrlPossible(T_Mgr.CtrlPossibleIndex.MouseRot, false);
         base.BeforeActionDelay(time);
     }
     protected override void Action(float time)
     {
         print("액션");
+       
 
         followCam.enabled = false;
         rotationPivotOfCam.enabled = false;
@@ -176,9 +154,13 @@ public class T_Snipe : T_SkillMgr {
     }
     protected override void AfterActionDelay(float time)
     {
-        print("후딜");
-        //스킬이 끝난 직후 피격될 수 있으니 여기서부터 LayerState를 normal상태로 바꾸어 준다.
+        print("후딜");        
 
         base.AfterActionDelay(time);
+    }
+    protected override void CoolTimeDelay()
+    {
+        T_mgr.setCtrlPossible(T_Mgr.CtrlPossibleIndex.MouseRot, true);
+        base.CoolTimeDelay();
     }
 }

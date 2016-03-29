@@ -21,7 +21,7 @@ public class testSkill : T_SkillMgr {
     void Start () {
         T_moveCtrl = GetComponent<T_MoveCtrl>();
         playerModel = GameObject.FindGameObjectWithTag(Tags.PlayerModel);
-        T_mgr = base.getT_Mgr();
+        T_mgr = GetComponent<T_Mgr>();
 
         blinkSpeed = blinkDist / blinkTime;
 
@@ -34,14 +34,21 @@ public class testSkill : T_SkillMgr {
             base.SkillCancel();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-            InputCommend(T_Mgr.SkillType.EP, iDecEP);
-        if (base.isBeforeDelay())
-            BeforeActionDelay(beforeDelayTime);
-        if (base.isAction())
-            Action(blinkTime);
-        if (base.isAfterDelay())
-            AfterActionDelay(afterDelayTime);
+        if (!isCoolTime())
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+                InputCommend(T_Mgr.SkillType.EP, iDecEP);
+            if (base.isBeforeDelay())
+                BeforeActionDelay(beforeDelayTime);
+            if (base.isAction())
+                Action(blinkTime);
+            if (base.isAfterDelay())
+                AfterActionDelay(afterDelayTime);
+        }
+        else
+        {
+            base.CoolTimeDelay();
+        }
     }
 
     protected override void InputCommend(T_Mgr.SkillType type, int decPoint)
