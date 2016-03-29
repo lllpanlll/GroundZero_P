@@ -31,6 +31,8 @@ public class T_Snipe : T_SkillMgr {
     private float afterDelayTime = 1.2f;
     private float coolTime = 0.2f;
 
+    private Ray fireRay;
+
     void Start () {
         T_mgr = GetComponent<T_Mgr>();
         rotationPivotOfCam = GetComponentInChildren<RotationPivotOfCam>();
@@ -55,83 +57,61 @@ public class T_Snipe : T_SkillMgr {
 	
 	void Update () {
 
-        ////화면의 중앙 벡터
-        //Vector3 centerPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, 0.0f));
-        ////화면의 중앙에서 카메라의 정면방향으로 레이를 쏜다.
-        //Ray fireRay = new Ray(centerPos, camTr.forward);
+        //화면의 중앙 벡터
+        Vector3 centerPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, 0.0f));
+        //화면의 중앙에서 카메라의 정면방향으로 레이를 쏜다.
+        fireRay = new Ray(centerPos, camTr.forward);
 
-        //if (Input.GetMouseButtonDown(1) && T_mgr.getCtrlPossible().Skill == true)
-        //{
-        //    if (T_mgr.getAP() < iDecAP)
-        //        return;
+        if (bZoom)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                bZoom = false;
 
-        //    T_mgr.ChangeState(T_Mgr.State.Skill);
-        //    T_mgr.setAP(iDecAP);
+                Camera.main.fieldOfView = fOriginFOV;
 
-        //    followCam.enabled = false;
-        //    rotationPivotOfCam.enabled = false;
+                //먼저 저격 중 카메라 회전 스크립트 종료.
+                snipeModeRotation.enabled = false;
+                //다음으로 카메라 Pivot을 저격으로 조준했던 방향으로 조정.              
+                //rotationPivotOfCam.TargetLookat(snipeModeRotation.getLastShotPos());
+                rotationPivotOfCam.transform.LookAt(snipeModeRotation.getLastShotPos());
+                //Pivot스크립트 재활성화.(카메라 회전 역할)
+                rotationPivotOfCam.enabled = true;
+                //followCam스크립트 재활성화.
+                followCam.enabled = true;
+                //발사 방향으로 캐릭터(모델) 방향 조정.
+                playerModel.SetActive(true);
+                playerModel.transform.rotation = Quaternion.Euler(0.0f, camTr.eulerAngles.y, 0.0f);
 
-        //    //카메라 이동 및 회전.
-        //    camTr.position = zoomTr.position + (zoomTr.right * followCam.getRight());
-        //    camTr.LookAt(fireRay.GetPoint(100.0f));                       
+                //카메라에서 쏘는 레이가 부딪힌 위치에 플레이어의 총알이 발사되는 각도를 조정한다.
+                RaycastHit aimRayHit;
+                if (Physics.Raycast(fireRay, out aimRayHit, fReach))
+                {
+                    //데미지 계산 코드 작성 위치
+                    if (aimRayHit.collider.gameObject.layer == LayerMask.NameToLayer(Layers.MonsterHitCollider))
+                    {
+                        aimRayHit.collider.gameObject.GetComponent<MonsterHitCtrl>().OnHitMonster(10);
+                        GameObject.FindWithTag(Tags.Monster).GetComponent<M_FSMTest>().stiffValue += 70; ;
+                    }
+                }
+                //bDelay = true;
+                base.setBeforeDelay(true);
 
-        //    bZoom = true;
-
-        //    Camera.main.fieldOfView = fZoomInFOV;
-        //    playerModel.SetActive(false);
-        //}
-
-        //if (bZoom)
-        //{
-        //    snipeModeRotation.enabled = true;
-
-        //    if (Input.GetMouseButtonDown(0))
-        //    {
-        //        bZoom = false;
-
-        //        Camera.main.fieldOfView = fOriginFOV;
-
-        //        //먼저 저격 중 카메라 회전 스크립트 종료.
-        //        snipeModeRotation.enabled = false;  
-        //        //다음으로 카메라 Pivot을 저격으로 조준했던 방향으로 조정.              
-        //        //rotationPivotOfCam.TargetLookat(snipeModeRotation.getLastShotPos());
-        //        rotationPivotOfCam.transform.LookAt(snipeModeRotation.getLastShotPos());
-        //        //Pivot스크립트 재활성화.(카메라 회전 역할)
-        //        rotationPivotOfCam.enabled = true;
-        //        //followCam스크립트 재활성화.
-        //        followCam.enabled = true;
-        //        //발사 방향으로 캐릭터(모델) 방향 조정.
-        //        playerModel.SetActive(true);
-        //        playerModel.transform.rotation = Quaternion.Euler(0.0f, camTr.eulerAngles.y, 0.0f);
-
-        //        //카메라에서 쏘는 레이가 부딪힌 위치에 플레이어의 총알이 발사되는 각도를 조정한다.
-        //        RaycastHit aimRayHit;
-        //        if (Physics.Raycast(fireRay, out aimRayHit, fReach))
-        //        {
-        //            //데미지 계산 코드 작성 위치
-        //            if (aimRayHit.collider.gameObject.layer == LayerMask.NameToLayer(Layers.MonsterHitCollider))
-        //            {
-        //                aimRayHit.collider.gameObject.GetComponent<MonsterHitCtrl>().OnHitMonster(10);
-        //                GameObject.FindWithTag(Tags.Monster).GetComponent<M_FSMTest>().stiffValue += 70; ;
-        //            }
-        //        }
-        //        bDelay = true;
-
-        //        #region<투사체>
-        //        //투사체 오브젝트 풀 생성.
-        //        foreach (GameObject bullet in bulletPool)
-        //        {
-        //            if (!bullet.activeSelf)
-        //            {
-        //                bullet.transform.position = zoomTr.position;
-        //                bullet.transform.rotation = camTr.rotation;
-        //                bullet.SetActive(true);
-        //                break;
-        //            }
-        //        }
-        //        #endregion
-        //    }
-        //}
+                #region<투사체>
+                //투사체 오브젝트 풀 생성.
+                foreach (GameObject bullet in bulletPool)
+                {
+                    if (!bullet.activeSelf)
+                    {
+                        bullet.transform.position = zoomTr.position;
+                        bullet.transform.rotation = camTr.rotation;
+                        bullet.SetActive(true);
+                        break;
+                    }
+                }
+                #endregion
+            }
+        }
 
         //if(bDelay)
         //{
@@ -154,7 +134,7 @@ public class T_Snipe : T_SkillMgr {
             base.SkillCancel();
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(1))
             InputCommend(T_Mgr.SkillType.AP, iDecAP);
         if (base.isBeforeDelay())
             BeforeActionDelay(beforeDelayTime);
@@ -177,14 +157,22 @@ public class T_Snipe : T_SkillMgr {
     protected override void Action(float time)
     {
         print("액션");
-        T_mgr.setLayerState(T_Mgr.LayerState.invincibility);
 
+        followCam.enabled = false;
+        rotationPivotOfCam.enabled = false;
 
+        //카메라 이동 및 회전.
+        camTr.position = zoomTr.position + (zoomTr.right * followCam.getRight());
+        camTr.LookAt(fireRay.GetPoint(100.0f));
 
+        bZoom = true;
 
+        Camera.main.fieldOfView = fZoomInFOV;
+        playerModel.SetActive(false);
 
+        snipeModeRotation.enabled = true;
 
-        base.Action(time);
+        //base.Action(time);
     }
     protected override void AfterActionDelay(float time)
     {
