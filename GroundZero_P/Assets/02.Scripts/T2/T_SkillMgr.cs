@@ -58,6 +58,7 @@ public class T_SkillMgr : MonoBehaviour {
     protected bool isAfterDelay() { return bAfterDelay; }
     protected bool isBeforeDelay() { return bBeforeDelay; }
     protected bool isAction() { return bAction; }
+    protected void setBeforeDelay(bool b) { bBeforeDelay = b; }
     protected void setCoolTime(float time) { fCoolTime = time; }
     protected T_Mgr getT_Mgr() { return T_Mgr.GetInstance(); }
     
