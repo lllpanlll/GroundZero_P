@@ -7,6 +7,7 @@ public class T_SkillMgr : MonoBehaviour {
     private bool bAction;
     private bool bAfterDelay;
     private bool bCoolTime;
+    private bool bUsing;
 
     private float fCoolTime;
     
@@ -15,6 +16,7 @@ public class T_SkillMgr : MonoBehaviour {
         bAction = false;
         bAfterDelay = false;
         bCoolTime = false;
+        bUsing = false;
         fCoolTime = 0.0f;
     }
 
@@ -27,6 +29,7 @@ public class T_SkillMgr : MonoBehaviour {
             {
                 T_Mgr.GetInstance().ChangeState(T_Mgr.State.Skill);
 
+                bUsing = true;
                 bBeforeDelay = true;
                 return;
             }           
@@ -62,8 +65,10 @@ public class T_SkillMgr : MonoBehaviour {
     protected bool isAfterDelay() { return bAfterDelay; }
     protected bool isBeforeDelay() { return bBeforeDelay; }
     protected bool isAction() { return bAction; }
+    protected bool isUsing() { return bUsing; }
     protected bool isCoolTime() { return bCoolTime; }
 
+    protected void EndAction() { bAction = false;  bAfterDelay = true; }
     protected void setAction(bool b) { bAction = b; }
     protected void setAfterDelay(bool b) { bAfterDelay = b; }
     protected void setCoolTime(float time) { fCoolTime = time; }
@@ -71,6 +76,7 @@ public class T_SkillMgr : MonoBehaviour {
     
     IEnumerator BeforeDelayTimer(float time)
     {
+        
         //선 딜레이 애니메이션 플레이
 
         //if문에 한번만 작동 되도록 bBeforeDelay를 바로 false시켜준다.
@@ -102,10 +108,12 @@ public class T_SkillMgr : MonoBehaviour {
 
         T_Mgr.GetInstance().ChangeState(T_Mgr.State.idle);
         bCoolTime = true;
+        bUsing = false;
     }
     IEnumerator CoolTimer(float time)
     {        
         yield return new WaitForSeconds(time);
-        bCoolTime = false;
+        print("쿨타임 종료");
+        bCoolTime = false;        
     }
 }

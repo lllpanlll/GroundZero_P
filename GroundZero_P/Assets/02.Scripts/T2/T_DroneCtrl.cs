@@ -1,20 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class T_DroneCtrl : MonoBehaviour {
+public class T_DroneCtrl : T_SkillMgr {
     public Transform[] setPos = new Transform[6];
     public GameObject dronePref;
     private GameObject[] drones = new GameObject[6];
 
     private T_Mgr T_mgr;
 
-    private bool bAction;
+    //private bool bAction;
 
     private int iDecEP = 10;
 
     //드론 지속 시간
-    private bool bLife = false;
-    private float lifeTime = 30.0f, lifeTimer = 0.0f;
+    //private bool bLife = false;
+    //private float lifeTime = 30.0f, lifeTimer = 0.0f;
+
+    private float beforeDelayTime = 0.0f;
+    private float actionTime = 5.0f;
+    private float afterDelayTime = 0.2f;
+    private float coolTime = 0.2f;
 
     //드론! 마지막 일격!
     private bool bFinishAttack = false;
@@ -31,65 +36,97 @@ public class T_DroneCtrl : MonoBehaviour {
             drones[i].GetComponent<Drone>().setTargetPos(setPos[i].position);
 
         }
-        bAction = false;
+        base.setCoolTime(this.coolTime);
     }
 	
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.Alpha2) && T_mgr.getCtrlPossible().Skill == true)
+        if (T_mgr.getState() == T_Mgr.State.be_Shot)
+            base.SkillCancel();
+
+        if (!base.isCoolTime())
         {
-            if (!bAction)
-            {
-                if (T_mgr.getEP() <= 0.0f || T_mgr.getEP() < iDecEP)
-                {
-                    print("EP가 부족합니다.");
-                    return;
-                }
-                else
-                {
-                    bAction = true;
+            if (Input.GetKeyDown(KeyCode.Alpha2) && !base.isUsing())
+                InputCommend(T_Mgr.SkillType.EP, iDecEP);
+            if (base.isBeforeDelay())
+                BeforeActionDelay(beforeDelayTime);
+            if (base.isAction())
+                Action(actionTime);
+            if (base.isAfterDelay())
+                AfterActionDelay(afterDelayTime);
+        }
+        else
+            CoolTimeDelay();
+    }
 
-                    T_mgr.ChangeState(T_Mgr.State.Skill);
+    protected override void InputCommend(T_Mgr.SkillType type, int decPoint)
+    {
+        base.InputCommend(type, decPoint);
+    }
+    protected override void BeforeActionDelay(float time)
+    {
+        print("선딜");
+        base.BeforeActionDelay(time);
+    }
+    protected override void Action(float time)
+    {
+        print("액션");
 
-                    T_mgr.DecreaseSkillPoint(T_Mgr.SkillType.EP, iDecEP);
-                }
-            }
+        for (int i = 0; i < 6; i++)
+        {
+            drones[i].transform.position = setPos[i].position;
+            drones[i].SetActive(true);
         }
 
-        if(bAction)
+        T_mgr.ChangeState(T_Mgr.State.idle);
+
+       
+
+        this.StartCoroutine(FollowDrone(time));
+        this.StartCoroutine(EndDrone(time));
+
+        base.setAction(false);
+        //base.Action(time);
+    }
+    protected override void AfterActionDelay(float time)
+    {
+        print("후딜");
+
+        for (int i = 0; i < 6; i++)
         {
-            for(int i=0; i<6; i++)
-            {
-                drones[i].transform.position = setPos[i].position;
-                drones[i].SetActive(true);
-            }
-            bLife = true;
-            bAction = false;
-            T_mgr.ChangeState(T_Mgr.State.idle);
+            drones[i].SetActive(false);
         }
 
+        base.AfterActionDelay(time);
+    }
+    protected override void CoolTimeDelay()
+    {
+        base.CoolTimeDelay();
+    }
 
-        if(bLife)
-        {      
+    IEnumerator FollowDrone(float time)
+    {
+
+        //회피가 끝난 후, 이동속도를 '처음'부터 가속하기 위해 moveState를 Stop으로 해 놓는다.
+
+        float timeConut = 0;
+
+        while (time > timeConut)
+        {
+            print("이동");
             for (int i = 0; i < 6; i++)
             {
                 drones[i].GetComponent<Drone>().setTargetPos(setPos[i].position);
             }
+            yield return new WaitForEndOfFrame();
 
-            if (lifeTimer > lifeTime)
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    drones[i].SetActive(false);
-                }
-
-                bLife = false;
-                lifeTimer = 0.0f;
-            }
-            else
-            {
-                lifeTimer += Time.deltaTime;
-            }
-        }
-
+            timeConut += Time.deltaTime;
+        }               
     }
+
+    IEnumerator EndDrone(float time)
+    {
+        yield return new WaitForSeconds(time);
+        base.setAfterDelay(true);
+    }
+
 }

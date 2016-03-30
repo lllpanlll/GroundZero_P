@@ -58,7 +58,7 @@ public class ObjectPool : MonoBehaviour{
         }
     }
 
-    public void ClearObject()
+    public void AllDeActiveObject()
     {
         if (objectPool == null)
             return;

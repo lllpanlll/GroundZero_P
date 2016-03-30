@@ -37,14 +37,21 @@ public class T_BlinkCounter : T_SkillMgr {
         if (T_mgr.getState() == T_Mgr.State.be_Shot)
             base.SkillCancel();
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            InputCommend(T_Mgr.SkillType.EP, iDecEP);
-        if (base.isBeforeDelay())
-            BeforeActionDelay(beforeDelayTime);
-        if (base.isAction())
-            Action(blinkTime);
-        if (base.isAfterDelay())
-            AfterActionDelay(afterDelayTime);
+        if (!base.isCoolTime())
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1) && !base.isUsing())
+                InputCommend(T_Mgr.SkillType.EP, iDecEP);
+            if (base.isBeforeDelay())
+                BeforeActionDelay(beforeDelayTime);
+            if (base.isAction())
+                Action(blinkTime);
+            if (base.isAfterDelay())
+                AfterActionDelay(afterDelayTime);
+        }
+        else
+        {
+            CoolTimeDelay();
+        }
     }
 
     protected override void InputCommend(T_Mgr.SkillType type, int decPoint)
@@ -86,6 +93,10 @@ public class T_BlinkCounter : T_SkillMgr {
         playerModel.transform.position = transform.position;
 
         base.AfterActionDelay(time);
+    }
+    protected override void CoolTimeDelay()
+    {
+        base.CoolTimeDelay();
     }
 
     IEnumerator StartBlinkCounter(float time)

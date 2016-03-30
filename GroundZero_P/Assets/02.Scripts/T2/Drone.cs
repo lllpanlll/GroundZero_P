@@ -14,21 +14,15 @@ public class Drone : MonoBehaviour {
     private float rpmTime = 0.5f;
     private float rpmTimer = 0.0f;
 
-    public GameObject bulletPrefeb;
-    public List<GameObject> bulletPool = new List<GameObject>();
+    public GameObject bulletPref;
+    private GameObject bullet;
+    private ObjectPool bulletPool = new ObjectPool();
 
     void Start () {
         T_mgr = GameObject.FindGameObjectWithTag(Tags.Player).GetComponent<T_Mgr>();
         playerTr = GameObject.FindGameObjectWithTag(Tags.CameraTarget).transform;
 
-        for (int i = 0; i < 10; i++)
-        {
-            GameObject bullet = (GameObject)Instantiate(bulletPrefeb);
-
-            bullet.name = "bulletPrefeb" + i.ToString();
-            bullet.SetActive(false);
-            bulletPool.Add(bullet);
-        }
+        bulletPool.CreatePool(bulletPref, 10);
     }
 
     void OnEnable()
@@ -56,21 +50,12 @@ public class Drone : MonoBehaviour {
     private void Fire()
     {
         float CamRotX = Camera.main.transform.eulerAngles.x;
-        transform.rotation = Quaternion.Euler(CamRotX, playerTr.eulerAngles.y, 0.0f);
-
-       
+        transform.rotation = Quaternion.Euler(CamRotX, playerTr.eulerAngles.y, 0.0f);       
 
         //투사체 오브젝트 풀 생성.
-        foreach (GameObject bullet in bulletPool)
-        {
-            if (!bullet.activeSelf)
-            {
-                bullet.transform.position = transform.position;
-                bullet.transform.rotation = transform.rotation;
-                bullet.SetActive(true);
-                break;
-            }
-        }
+        bullet = bulletPool.UseObject();
+        bullet.transform.position = transform.position;
+        bullet.transform.rotation = transform.rotation;
     }
 
     public void setTargetPos(Vector3 pos)

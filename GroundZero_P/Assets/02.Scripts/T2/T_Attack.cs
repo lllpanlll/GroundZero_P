@@ -4,11 +4,13 @@ using System.Collections.Generic;
 
 public class T_Attack : MonoBehaviour
 {
-    public GameObject bulletPrefeb;
-    public List<GameObject> bulletPool = new List<GameObject>();
+    public GameObject bulletPref;
+    private GameObject bullet;
+    private ObjectPool bulletPool = new ObjectPool();
 
-    public GameObject flarePrefeb;
-    public List<GameObject> flareEffectPool = new List<GameObject>();
+    public GameObject flarePref;
+    private GameObject flare;
+    private ObjectPool flarePool = new ObjectPool();
 
     public Transform firePos;
 
@@ -43,24 +45,11 @@ public class T_Attack : MonoBehaviour
 
         T_moveCtrl = GetComponent<T_MoveCtrl>();
         T_mgr = GetComponent<T_Mgr>();
-        playerModel = GameObject.FindGameObjectWithTag(Tags.PlayerModel).transform;      
+        playerModel = GameObject.FindGameObjectWithTag(Tags.PlayerModel).transform;
 
-        for (int i = 0; i < maxMagazine; i++)
-        {
-            GameObject flareEffect = (GameObject)Instantiate(flarePrefeb);
+        bulletPool.CreatePool(bulletPref, maxMagazine);
+        flarePool.CreatePool(flarePref, maxMagazine);
 
-            flareEffect.name = "flarePrefeb" + i.ToString();
-            flareEffect.SetActive(false);
-            flareEffectPool.Add(flareEffect);
-        }
-        for (int i = 0; i < maxMagazine; i++)
-        {
-            GameObject bullet = (GameObject)Instantiate(bulletPrefeb);
-
-            bullet.name = "bulletPrefeb" + i.ToString();
-            bullet.SetActive(false);
-            bulletPool.Add(bullet);
-        }
     }
 
     void Update()
@@ -186,14 +175,6 @@ public class T_Attack : MonoBehaviour
             if (fRangeCheck < fReach)
             {
                 ////데미지 계산 코드 작성 위치
-                //if (aimRayHit.collider.gameObject.layer == LayerMask.NameToLayer(Layers.MonsterHitCollider))
-                //{
-                //    aimRayHit.collider.gameObject.GetComponent<MonsterHitCtrl>().OnHitMonster(10);
-                //}
-                //else if(aimRayHit.collider.gameObject.layer == LayerMask.NameToLayer(Layers.NormalObj))
-                //{
-                //    aimRayHit.collider.gameObject.GetComponent<NormalObjectCtrl>().OnHitObj(10);
-                //}
 
             }
         }
@@ -207,33 +188,20 @@ public class T_Attack : MonoBehaviour
                                   Random.Range(fTarget.z - accuracy, fTarget.z + accuracy));
             firePos.GetComponent<TargetLookAt>().TargetLookat(fTarget);
         }
-        
-        //투사체 오브젝트 풀 생성.
-        foreach(GameObject bullet in bulletPool)
-        {
-            if(!bullet.activeSelf)
-            {
-                bullet.transform.position = firePos.position;
-                bullet.transform.rotation = firePos.rotation;
-                bullet.SetActive(true);
-                break;
-            }
-        }        
+
+        //투사체 오브젝트 풀 생성.    
+        bullet = bulletPool.UseObject();
+        bullet.transform.position = firePos.position;
+        bullet.transform.rotation = firePos.rotation;
+
     }
 
     public bool isFire() { return bFire; }
     public float getReach() { return fReach; }
     public void setFlareEffect(Vector3 pos)
     {
-        foreach (GameObject flare in flareEffectPool)
-        {
-            if (!flare.activeSelf)
-            {
-                flare.transform.position = pos;
-                flare.SetActive(true);
-                break;
-            }                
-        }
+        flare = flarePool.UseObject();
+        flare.transform.position = pos;
 
     }
 }

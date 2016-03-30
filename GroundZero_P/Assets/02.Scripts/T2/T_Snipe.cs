@@ -60,7 +60,7 @@ public class T_Snipe : T_SkillMgr {
 
         if (!base.isCoolTime())
         {
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(1) && !base.isUsing())
                 InputCommend(T_Mgr.SkillType.AP, iDecAP);
             if (base.isBeforeDelay())
                 BeforeActionDelay(beforeDelayTime);
@@ -106,9 +106,7 @@ public class T_Snipe : T_SkillMgr {
                         GameObject.FindWithTag(Tags.Monster).GetComponent<M_FSMTest>().stiffValue += 70; ;
                     }
                 }
-                //bDelay = true;
-                base.setAction(false);
-                base.setAfterDelay(true);
+                base.EndAction();
 
                 #region<투사체>
                 bullet = bulletPool.UseObject();

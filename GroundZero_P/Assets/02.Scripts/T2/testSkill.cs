@@ -36,7 +36,7 @@ public class testSkill : T_SkillMgr {
 
         if (!isCoolTime())
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && !base.isUsing())
                 InputCommend(T_Mgr.SkillType.EP, iDecEP);
             if (base.isBeforeDelay())
                 BeforeActionDelay(beforeDelayTime);
