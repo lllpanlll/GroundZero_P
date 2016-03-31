@@ -2,8 +2,8 @@
 using System.Collections;
 
 public class testSkill : T_SkillMgr {
-    private T_MoveCtrl T_moveCtrl;
-    private T_Mgr T_mgr;
+    private T_MoveCtrl t_MoveCtrl;
+    private T_Mgr t_Mgr;
 
     private GameObject playerModel;
     public GameObject blinkEffect;
@@ -19,30 +19,30 @@ public class testSkill : T_SkillMgr {
     private float blinkSpeed;
 
     void Start () {
-        T_moveCtrl = GetComponent<T_MoveCtrl>();
+        t_MoveCtrl = GetComponent<T_MoveCtrl>();
         playerModel = GameObject.FindGameObjectWithTag(Tags.PlayerModel);
-        T_mgr = GetComponent<T_Mgr>();
+        t_Mgr = GetComponent<T_Mgr>();
 
         blinkSpeed = blinkDist / blinkTime;
 
-        base.setCoolTime(this.coolTime);
+        base.SetCoolTime(this.coolTime);
     }
 	
 	void Update () {
-        if(T_mgr.getState() == T_Mgr.State.be_Shot)
+        if(t_Mgr.GetState() == T_Mgr.State.be_Shot)
         {
             base.SkillCancel();
         }
 
-        if (!isCoolTime())
+        if (!IsCoolTime())
         {
-            if (Input.GetKeyDown(KeyCode.Space) && !base.isUsing())
-                InputCommend(T_Mgr.SkillType.EP, iDecEP);
-            if (base.isBeforeDelay())
+            if (Input.GetKeyDown(KeyCode.Space) && !base.IsRunning())
+                InputCommand(T_Mgr.SkillType.EP, iDecEP);
+            if (base.IsBeforeDelay())
                 BeforeActionDelay(beforeDelayTime);
-            if (base.isAction())
-                Action(blinkTime);
-            if (base.isAfterDelay())
+            if (base.IsExecute())
+                Execute(blinkTime);
+            if (base.IsAfterDelay())
                 AfterActionDelay(afterDelayTime);
         }
         else
@@ -51,25 +51,25 @@ public class testSkill : T_SkillMgr {
         }
     }
 
-    protected override void InputCommend(T_Mgr.SkillType type, int decPoint)
+    protected override void InputCommand(T_Mgr.SkillType type, int decPoint)
     {
-        base.InputCommend(type, decPoint);
+        base.InputCommand(type, decPoint);
     }
     protected override void BeforeActionDelay(float time)
     {
         print("선딜");       
         base.BeforeActionDelay(time);       
     }
-    protected override void Action(float time)
+    protected override void Execute(float time)
     {
         print("액션");
-        T_mgr.setLayerState(T_Mgr.LayerState.invincibility);
+        t_Mgr.SetLayerState(T_Mgr.LayerState.invincibility);
 
         //플레이어와 캐릭터(모델)를 회전시킬 값을 구한다.
-        float targetRot = T_moveCtrl.getTargetRot();
+        float targetRot = t_MoveCtrl.GetTargetRot();
 
         //가만히 있는 경우, 뒤로 이동시키기 위해 targetRot값을 바꾼다.
-        if (T_moveCtrl.getMoveState() == T_MoveCtrl.MoveState.Stop)
+        if (t_MoveCtrl.GetMoveState() == T_MoveCtrl.MoveState.Stop)
         {
             print("뒤로!");
             float CamRot = Camera.main.transform.eulerAngles.y;
@@ -84,7 +84,7 @@ public class testSkill : T_SkillMgr {
         //이동 코루틴.
         this.StartCoroutine(StartBlink(time));
 
-        base.Action(time);
+        base.Execute(time);
     }
     protected override void AfterActionDelay(float time)
     {
@@ -92,7 +92,7 @@ public class testSkill : T_SkillMgr {
         playerModel.transform.position = transform.position;
         blinkEffect.SetActive(false);
         //스킬이 끝난 직후 피격될 수 있으니 여기서부터 LayerState를 normal상태로 바꾸어 준다.
-        T_mgr.setLayerState(T_Mgr.LayerState.normal);
+        t_Mgr.SetLayerState(T_Mgr.LayerState.normal);
 
         base.AfterActionDelay(time);
     }
@@ -108,7 +108,7 @@ public class testSkill : T_SkillMgr {
         blinkEffect.SetActive(true);
 
         //회피가 끝난 후, 이동속도를 '처음'부터 가속하기 위해 moveState를 Stop으로 해 놓는다.
-        T_moveCtrl.setMoveState(T_MoveCtrl.MoveState.Stop);
+        t_MoveCtrl.SetMoveState(T_MoveCtrl.MoveState.Stop);
 
         float timeConut = 0;
         

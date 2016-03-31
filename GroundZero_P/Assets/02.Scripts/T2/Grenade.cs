@@ -4,13 +4,13 @@ using System.Collections;
 public class Grenade : MonoBehaviour {
 
     private CapsuleCollider capsuleCollider;
-    public GameObject Effect;
+    public GameObject oEffect;
 
     private float lifeTimer = 0.0f, lifeTime = 1.0f;
     void Awake () {
         capsuleCollider = GetComponent<CapsuleCollider>();
-        Effect = (GameObject)Instantiate(Effect);
-        Effect.SetActive(false);
+        oEffect = (GameObject)Instantiate(oEffect);
+        oEffect.SetActive(false);
     }
 
     void OnEnable()
@@ -18,9 +18,9 @@ public class Grenade : MonoBehaviour {
         lifeTimer = 0.0f;
         lifeTime = 5.0f;
 
-        Effect = (GameObject)Instantiate(Effect);
-        Effect.SetActive(false);
-        Effect.transform.position = transform.position;
+        oEffect = (GameObject)Instantiate(oEffect);
+        oEffect.SetActive(false);
+        oEffect.transform.position = transform.position;
 
         capsuleCollider.enabled = true;
     }
@@ -32,7 +32,7 @@ public class Grenade : MonoBehaviour {
     void OnCollisionEnter(Collision col)
     {
         //폭파 이펙트 실행
-        //T_attack.setFlareEffect(col.contacts[0].point);
+        //T_attack.SetFlareEffect(col.contacts[0].point);
 
 
         if (col.collider.gameObject.layer == LayerMask.NameToLayer(Layers.MonsterHitCollider))
@@ -40,12 +40,12 @@ public class Grenade : MonoBehaviour {
             if (col.collider.gameObject.layer == LayerMask.NameToLayer(Layers.MonsterHitCollider))
             {
                 col.collider.gameObject.GetComponent<MonsterHitCtrl>().OnHitMonster(50);
-                Effect.SetActive(true);
+                oEffect.SetActive(true);
                 gameObject.SetActive(false);
             }
 
         }
-        Effect.SetActive(true);
+        oEffect.SetActive(true);
         gameObject.SetActive(false);
 
     }
@@ -55,7 +55,7 @@ public class Grenade : MonoBehaviour {
         if (lifeTimer > lifeTime)
         {
             lifeTimer = 0.0f;
-            Effect.SetActive(true);
+            oEffect.SetActive(true);
             gameObject.SetActive(false);
         }
         else

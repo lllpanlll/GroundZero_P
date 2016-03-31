@@ -2,44 +2,44 @@
 using System.Collections;
 
 public class RotationPivotOfCam : MonoBehaviour {
-    private float x, y;
+    private float fAngleX, fAngleY;
     private float fRotSpeed;
-    private T_MoveCtrl T_moveCtrl;
-    private T_Mgr T_mgr;
+    private T_MoveCtrl t_MoveCtrl;
+    private T_Mgr t_Mgr;
 
     private float fStartY;
     private float fClamp = 40.0f;
 
     void Start () {
-        T_moveCtrl = GetComponentInParent<T_MoveCtrl>();
-        T_mgr = GameObject.FindGameObjectWithTag(Tags.Player).GetComponent<T_Mgr>();
-        fRotSpeed = T_moveCtrl.fInitRotSpeed;
-        y = transform.eulerAngles.x;
-        x = transform.eulerAngles.y;
+        t_MoveCtrl = GetComponentInParent<T_MoveCtrl>();
+        t_Mgr = GameObject.FindGameObjectWithTag(Tags.Player).GetComponent<T_Mgr>();
+        fRotSpeed = t_MoveCtrl.fInitRotSpeed;
+        fAngleY = transform.eulerAngles.x;
+        fAngleX = transform.eulerAngles.y;
 
-        fStartY = y;
+        fStartY = fAngleY;
     }
 
     void OnEnable() 
     {
-        y = transform.eulerAngles.x;
-        x = transform.eulerAngles.y;
+        fAngleY = transform.eulerAngles.x;
+        fAngleX = transform.eulerAngles.y;
 
-        fStartY = y;
+        fStartY = fAngleY;
     }
 
     void Update () {
-        if (T_mgr.getCtrlPossible().MouseRot == true)
+        if (t_Mgr.GetCtrlPossible().MouseRot == true)
         {
-            y += -Input.GetAxis("Mouse Y") * fRotSpeed * Time.deltaTime;
-            x += Input.GetAxis("Mouse X") * fRotSpeed * Time.deltaTime;
+            fAngleY += -Input.GetAxis("Mouse Y") * fRotSpeed * Time.deltaTime;
+            fAngleX += Input.GetAxis("Mouse X") * fRotSpeed * Time.deltaTime;
 
             //Clamp
-            if ((y - fStartY) > fClamp) y = fStartY + fClamp;
-            else if ((y - fStartY) < -fClamp) y = fStartY + (-fClamp);
+            if ((fAngleY - fStartY) > fClamp) fAngleY = fStartY + fClamp;
+            else if ((fAngleY - fStartY) < -fClamp) fAngleY = fStartY + (-fClamp);
 
 
-            Quaternion rotation = Quaternion.Euler(y, x, 0.0f);
+            Quaternion rotation = Quaternion.Euler(fAngleY, fAngleX, 0.0f);
             transform.rotation = rotation;
         }
 

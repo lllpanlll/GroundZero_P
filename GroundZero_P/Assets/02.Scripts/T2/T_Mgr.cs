@@ -4,11 +4,11 @@ using System.Collections;
 
 public class T_Mgr : MonoBehaviour
 {
-    private int HP;
-    private int DP;
-    private int PP;
-    private int AP;
-    private float EP;
+    private int hp;
+    private int dp;
+    private int pp;
+    private int ap;
+    private float ep;
 
     public Scrollbar fillGaugeBar;
 
@@ -20,6 +20,7 @@ public class T_Mgr : MonoBehaviour
 
     public enum SkillType { AP, EP, PP }
 
+    //현재 T_SkillMgr에서 사용중이다.
     private static T_Mgr instance;
     public static T_Mgr GetInstance()
     {
@@ -43,10 +44,7 @@ public class T_Mgr : MonoBehaviour
     public enum CtrlPossibleIndex { Run, Sprint, Attack, MouseRot, Skill };
     CtrlPossible ctrlPossible;
 
-    // 스매쉬 온 오프 위한 것,
-    public GameObject _smash;
-
-    private T_MoveCtrl T_moveCtrl;
+    private T_MoveCtrl t_MoveCtrl;
 
     #region <달리기 상태에 따른 ep증감>
     private float fDecEP = 0.4f, fIncEP = 0.6f;
@@ -58,16 +56,15 @@ public class T_Mgr : MonoBehaviour
 
     void Start()
     {
-        HP = T_Stat.MAX_HP;
-        DP = T_Stat.INIT_DP;
-        PP = T_Stat.MAX_PP;
-        AP = T_Stat.MAX_AP;
-        //EP = T_Stat.MAX_EP;
-        EP = 100.0f;
+        hp = T_Stat.MAX_HP;
+        dp = T_Stat.INIT_DP;
+        pp = T_Stat.MAX_PP;
+        ap = T_Stat.MAX_AP;
+        ep = T_Stat.MAX_EP;
 
         curLayerState = LayerState.normal;
 
-        T_moveCtrl = GetComponent<T_MoveCtrl>();
+        t_MoveCtrl = GetComponent<T_MoveCtrl>();
 
         //마우스 커서 숨기기
         //Cursor.visible = false;
@@ -83,27 +80,27 @@ public class T_Mgr : MonoBehaviour
     void OnGUI()
     {
         GUI.Label(new Rect(20, 20, 200, 25), "State : " + state);
-        GUI.Label(new Rect(20, 90, 200, 25), "EP : " + EP + " / " + T_Stat.MAX_EP);
-        GUI.Label(new Rect(20, 110, 200, 25), "HP : " + HP + " / " + T_Stat.MAX_HP);
-        GUI.Label(new Rect(20, 130, 200, 25), "DP : " + DP + " / " + T_Stat.MAX_DP);
-        GUI.Label(new Rect(20, 150, 200, 25), "PP : " + PP + " / " + T_Stat.MAX_PP);
+        GUI.Label(new Rect(20, 90, 200, 25), "ep : " + ep + " / " + T_Stat.MAX_EP);
+        GUI.Label(new Rect(20, 110, 200, 25), "hp : " + hp + " / " + T_Stat.MAX_HP);
+        GUI.Label(new Rect(20, 130, 200, 25), "dp : " + dp + " / " + T_Stat.MAX_DP);
+        GUI.Label(new Rect(20, 150, 200, 25), "pp : " + pp + " / " + T_Stat.MAX_PP);
     }
     void Update()
     {
         //임시 지구력 UI.
-        fillGaugeBar.size = EP * 0.01f;
+        fillGaugeBar.size = ep * 0.01f;
 
         if (state == State.idle || state == State.attack)
         {
-            if (EP < 0.0f)
+            if (ep < 0.0f)
                 ctrlPossible.Sprint = false;
 
-            if (T_moveCtrl.getMoveState() == T_MoveCtrl.MoveState.Run ||
-                T_moveCtrl.getMoveState() == T_MoveCtrl.MoveState.Stop)
+            if (t_MoveCtrl.GetMoveState() == T_MoveCtrl.MoveState.Run ||
+                t_MoveCtrl.GetMoveState() == T_MoveCtrl.MoveState.Stop)
             {
                 EpIncrease();
             }
-            else if (T_moveCtrl.getMoveState() == T_MoveCtrl.MoveState.Sprint)
+            else if (t_MoveCtrl.GetMoveState() == T_MoveCtrl.MoveState.Sprint)
             {
                 EpDecrease();
             }
@@ -112,23 +109,23 @@ public class T_Mgr : MonoBehaviour
 
     void OnTriggerEnter(Collider coll)
     {
-        //몬스터 공격이면 데미지만큼 HP 차감
+        //몬스터 공격이면 데미지만큼 hp 차감
         if (coll.gameObject.layer == LayerMask.NameToLayer(Layers.MonsterAttkCollider))
         {
             print("hit");
             int iDamage = coll.gameObject.GetComponent<MonsterAttkCtrl>().GetDamage();
 
-            if (iDamage != 0 && DP > 0)
+            if (iDamage != 0 && dp > 0)
             {
-                if (DP > iDamage)
+                if (dp > iDamage)
                 {
-                    //DP -= iDamage;
+                    //dp -= iDamage;
                     //피격 지속시간은 나중에 피격상태에 따라 달라지도록 구현헤야 할 듯,
                     StartCoroutine(BeShotTimer(2.0f));
                 }
                 else
                 {
-                    DP = 0;
+                    dp = 0;
                 }
             }
             else
@@ -139,17 +136,17 @@ public class T_Mgr : MonoBehaviour
         }
     }
 
-    public float getEP() { return EP; }
-    public void setEP(float f) { EP = f; }
-    public int getAP() { return AP; }
-    public void setAP(int i) { AP = i; }
-    public int getDP() { return DP; }
-    public void setDP(int i) { DP = i; }
-    public int getPP() { return PP; }
-    public void setPP(int i) { PP = i; }
+    public float GetEP() { return ep; }
+    public void SetEP(float f) { ep = f; }
+    public int GetAP() { return ap; }
+    public void SetAP(int i) { ap = i; }
+    public int GetDP() { return dp; }
+    public void SetDP(int i) { dp = i; }
+    public int GetPP() { return pp; }
+    public void SetPP(int i) { pp = i; }
 
-    public LayerState getLayerState() { return curLayerState; }
-    public void setLayerState(LayerState s)
+    public LayerState GetLayerState() { return curLayerState; }
+    public void SetLayerState(LayerState s)
     {
         curLayerState = s;
         //캐릭터의 State를 이용하여 무적상태와 일반 상태를 변경시켜주는 부분,
@@ -164,7 +161,7 @@ public class T_Mgr : MonoBehaviour
     }
 
     //possibleState함수들.
-    public void setCtrlPossible(CtrlPossibleIndex index, bool b)
+    public void SetCtrlPossible(CtrlPossibleIndex index, bool b)
     {
         if (index == CtrlPossibleIndex.Run) ctrlPossible.Run = b;
         else if (index == CtrlPossibleIndex.Sprint) ctrlPossible.Sprint = b;
@@ -172,7 +169,7 @@ public class T_Mgr : MonoBehaviour
         else if (index == CtrlPossibleIndex.MouseRot) ctrlPossible.MouseRot = b;
         else if (index == CtrlPossibleIndex.Skill) ctrlPossible.Skill = b;
     }
-    public CtrlPossible getCtrlPossible() { return ctrlPossible; }
+    public CtrlPossible GetCtrlPossible() { return ctrlPossible; }
 
     public void ChangeState(State s)
     {
@@ -210,7 +207,7 @@ public class T_Mgr : MonoBehaviour
             ctrlPossible.Skill = false;
         }
     }
-    public State getState() { return state; }
+    public State GetState() { return state; }
     IEnumerator BeShotTimer(float time)
     {
         print("beShot");
@@ -220,18 +217,18 @@ public class T_Mgr : MonoBehaviour
         ChangeState(State.idle);
     }
 
-    //전력질주시에 사용하는 EP감소, 충전, 충전가속 함수.
+    //전력질주시에 사용하는 ep감소, 충전, 충전가속 함수.
     void EpDecrease()
     {
         //가속으로 인해 바뀐 수치들 초기화
-        fIncEP = 0.2f;
+        fIncEP = 1;
         incAccelTimer = 0.0f;
 
-        if (EP > 0.0f)
+        if (ep > 0.0f)
         {
             if (decreaseTimer > decreaseTime)
             {
-                EP -= fDecEP;
+                ep -= fDecEP;
                 decreaseTimer = 0.0f;
             }
             else
@@ -242,12 +239,12 @@ public class T_Mgr : MonoBehaviour
     }
     void EpIncrease()
     {
-        if (EP < T_Stat.MAX_EP)
+        if (ep < T_Stat.MAX_EP)
         {
             EpIncAccel();
             if (increaseTimer > increaseTime)
             {
-                EP += fIncEP;
+                ep += fIncEP;
                 increaseTimer = 0.0f;
             }
             else
@@ -255,8 +252,8 @@ public class T_Mgr : MonoBehaviour
         }
         else
         {
-            if (EP > 100)
-                EP = 100.0f;
+            if (ep > 100)
+                ep = 100;
         }
     }
     void EpIncAccel()
@@ -271,48 +268,48 @@ public class T_Mgr : MonoBehaviour
     }
 
     //스킬 타입별 포인트 감소
-    public bool DecreaseSkillPoint(T_Mgr.SkillType type, int decPoint)
+    public bool DecreaseSkillPoint (T_Mgr.SkillType type, int decPoint)
     {
         if (type == T_Mgr.SkillType.AP)
         {
-            if (AP <= 0 || AP < decPoint)
+            if (ap <= 0 || ap < decPoint)
             {
-                print("AP가 부족합니다.");
+                print("ap가 부족합니다.");
                 return false;
             }
             else
             {
-                AP -= decPoint;
+                ap -= decPoint;
                 return true;
             }
         }
         else if (type == T_Mgr.SkillType.EP)
         {
-            if (EP <= 0 || EP < decPoint)
+            if (ep <= 0 || ep < decPoint)
             {
-                print("EP가 부족합니다.");
+                print("ep가 부족합니다.");
                 return false;
             }
             else
             {
                 //가속으로 인해 바뀐 수치들 초기화
-                fIncEP = 0.6f;
+                fIncEP = 0;
                 incAccelTimer = 0.0f;
 
-                EP -= decPoint;
+                ep -= decPoint;
                 return true;
             }
         }
         else if (type == T_Mgr.SkillType.PP)
         {
-            if (PP <= 0 || PP < decPoint)
+            if (pp <= 0 || pp < decPoint)
             {
-                print("PP가 부족합니다.");
+                print("pp가 부족합니다.");
                 return false;
             }
             else
             {
-                PP -= decPoint;
+                pp -= decPoint;
                 return true;
             }
         }

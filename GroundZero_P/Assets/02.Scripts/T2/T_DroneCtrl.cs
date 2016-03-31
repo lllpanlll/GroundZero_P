@@ -2,11 +2,11 @@
 using System.Collections;
 
 public class T_DroneCtrl : T_SkillMgr {
-    public Transform[] setPos = new Transform[6];
-    public GameObject dronePref;
-    private GameObject[] drones = new GameObject[6];
+    public Transform[] trSetPos = new Transform[6];
+    public GameObject oDronePref;
+    private GameObject[] oDrones = new GameObject[6];
 
-    private T_Mgr T_mgr;
+    private T_Mgr t_Mgr;
 
     //private bool bAction;
 
@@ -17,7 +17,7 @@ public class T_DroneCtrl : T_SkillMgr {
     //private float lifeTime = 30.0f, lifeTimer = 0.0f;
 
     private float beforeDelayTime = 0.0f;
-    private float actionTime = 5.0f;
+    private float actionTime = 2.0f;
     private float afterDelayTime = 0.2f;
     private float coolTime = 0.2f;
 
@@ -25,67 +25,66 @@ public class T_DroneCtrl : T_SkillMgr {
     private bool bFinishAttack = false;
 
     void Start () {
-        T_mgr = GetComponent<T_Mgr>();
+        t_Mgr = GetComponent<T_Mgr>();
 
         //드론 위치 생성
         for (int i = 0; i < 6; i++)
         {
-            drones[i] = (GameObject)Instantiate(dronePref);
-            drones[i].SetActive(false);
-            drones[i].GetComponent<Drone>().setSpeed(Random.Range(2.0f, 7.0f));
-            drones[i].GetComponent<Drone>().setTargetPos(setPos[i].position);
+            oDrones[i] = (GameObject)Instantiate(oDronePref);
+            oDrones[i].SetActive(false);
+            oDrones[i].GetComponent<Drone>().setSpeed(Random.Range(2.0f, 7.0f));
+            oDrones[i].GetComponent<Drone>().setTargetPos(trSetPos[i].position);
 
         }
-        base.setCoolTime(this.coolTime);
+        base.SetCoolTime(this.coolTime);
     }
 	
 	void Update () {
-        if (T_mgr.getState() == T_Mgr.State.be_Shot)
+        if (t_Mgr.GetState() == T_Mgr.State.be_Shot)
             base.SkillCancel();
 
-        if (!base.isCoolTime())
+        if (!base.IsCoolTime())
         {
-            if (Input.GetKeyDown(KeyCode.Alpha2) && !base.isUsing())
-                InputCommend(T_Mgr.SkillType.EP, iDecEP);
-            if (base.isBeforeDelay())
+            if (Input.GetKeyDown(KeyCode.Alpha2) && !base.IsRunning())
+                InputCommand(T_Mgr.SkillType.EP, iDecEP);
+            if (base.IsBeforeDelay())
                 BeforeActionDelay(beforeDelayTime);
-            if (base.isAction())
-                Action(actionTime);
-            if (base.isAfterDelay())
+            if (base.IsExecute())
+                Execute(actionTime);
+            if (base.IsAfterDelay())
                 AfterActionDelay(afterDelayTime);
         }
         else
             CoolTimeDelay();
     }
 
-    protected override void InputCommend(T_Mgr.SkillType type, int decPoint)
+    protected override void InputCommand(T_Mgr.SkillType type, int decPoint)
     {
-        base.InputCommend(type, decPoint);
+        base.InputCommand(type, decPoint);
     }
     protected override void BeforeActionDelay(float time)
     {
         print("선딜");
         base.BeforeActionDelay(time);
     }
-    protected override void Action(float time)
+    protected override void Execute(float time)
     {
         print("액션");
 
         for (int i = 0; i < 6; i++)
         {
-            drones[i].transform.position = setPos[i].position;
-            drones[i].SetActive(true);
+            oDrones[i].transform.position = trSetPos[i].position;
+            oDrones[i].SetActive(true);
         }
 
-        T_mgr.ChangeState(T_Mgr.State.idle);
+        t_Mgr.ChangeState(T_Mgr.State.idle);
 
        
 
         this.StartCoroutine(FollowDrone(time));
-        this.StartCoroutine(EndDrone(time));
 
-        base.setAction(false);
-        //base.Action(time);
+        base.SetAction(false);
+        //base.Execute(time);
     }
     protected override void AfterActionDelay(float time)
     {
@@ -93,7 +92,7 @@ public class T_DroneCtrl : T_SkillMgr {
 
         for (int i = 0; i < 6; i++)
         {
-            drones[i].SetActive(false);
+            oDrones[i].SetActive(false);
         }
 
         base.AfterActionDelay(time);
@@ -115,18 +114,12 @@ public class T_DroneCtrl : T_SkillMgr {
             print("이동");
             for (int i = 0; i < 6; i++)
             {
-                drones[i].GetComponent<Drone>().setTargetPos(setPos[i].position);
+                oDrones[i].GetComponent<Drone>().setTargetPos(trSetPos[i].position);
             }
             yield return new WaitForEndOfFrame();
 
             timeConut += Time.deltaTime;
-        }               
+        }
+        base.SetAfterDelay(true);
     }
-
-    IEnumerator EndDrone(float time)
-    {
-        yield return new WaitForSeconds(time);
-        base.setAfterDelay(true);
-    }
-
 }

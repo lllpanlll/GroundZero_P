@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class SnipeModeRotation : MonoBehaviour {
-    private float x, y;
+    private float fAngleX, fAngleY;
     private float fRotSpeed = 20.0f;
 
     private float fStartX, fStartY;
@@ -11,38 +11,38 @@ public class SnipeModeRotation : MonoBehaviour {
     private float fReach = 1000.0f;
 
     void Start () {
-        y = transform.eulerAngles.x;
-        x = transform.eulerAngles.y;
+        fAngleY = transform.eulerAngles.x;
+        fAngleX = transform.eulerAngles.y;
 
-        fStartX = x;
-        fStartY = y;
+        fStartX = fAngleX;
+        fStartY = fAngleY;
     }
     void OnEnable()
     {
-        y = transform.eulerAngles.x;
-        x = transform.eulerAngles.y;
+        fAngleY = transform.eulerAngles.x;
+        fAngleX = transform.eulerAngles.y;
 
-        fStartX = x;
-        fStartY = y;
+        fStartX = fAngleX;
+        fStartY = fAngleY;
     }
 	
 	void Update () {
-        y += -Input.GetAxis("Mouse Y") * fRotSpeed * Time.deltaTime;
-        x += Input.GetAxis("Mouse X") * fRotSpeed * Time.deltaTime;
+        fAngleY += -Input.GetAxis("Mouse Y") * fRotSpeed * Time.deltaTime;
+        fAngleX += Input.GetAxis("Mouse X") * fRotSpeed * Time.deltaTime;
 
         //Clamp
-        if ((y - fStartY) > fClamp)            y = fStartY + fClamp;
-        else if ((y - fStartY) < -fClamp)      y = fStartY + (-fClamp);
+        if ((fAngleY - fStartY) > fClamp)         fAngleY = fStartY + fClamp;
+        else if ((fAngleY - fStartY) < -fClamp)   fAngleY = fStartY + (-fClamp);
 
-        if ((x - fStartX) > fClamp)            x = fStartX + fClamp;
-        else if((x - fStartX) < -fClamp)       x = fStartX + (-fClamp);
+        if ((fAngleX - fStartX) > fClamp)        fAngleX = fStartX + fClamp;
+        else if((fAngleX - fStartX) < -fClamp)   fAngleX = fStartX + (-fClamp);
 
 
-        Quaternion rotation = Quaternion.Euler(y, x, 0.0f);
+        Quaternion rotation = Quaternion.Euler(fAngleY, fAngleX, 0.0f);
         transform.rotation = rotation;
     }
     
-    public Vector3 getLastShotPos()
+    public Vector3 GetLastShotPos()
     {
         //화면의 중앙 벡터
         Vector3 centerPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, 0.0f));

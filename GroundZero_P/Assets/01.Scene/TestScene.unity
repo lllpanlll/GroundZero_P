@@ -1414,7 +1414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &132489836
 Transform:
   m_ObjectHideFlags: 0
@@ -1422,7 +1422,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 132489835}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -38.2799988}
+  m_LocalPosition: {x: 21.2999992, y: 0, z: -8.60000038}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1857035382}
@@ -10009,14 +10009,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c811ba7be679fa946a0a39ff088a9d15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setPos:
+  trSetPos:
   - {fileID: 559584944}
   - {fileID: 1457102290}
   - {fileID: 1669349976}
   - {fileID: 1070590548}
   - {fileID: 1829260927}
   - {fileID: 1535296519}
-  dronePref: {fileID: 110142, guid: 15037a28816cc6640821a722d8c944b4, type: 2}
+  oDronePref: {fileID: 110142, guid: 15037a28816cc6640821a722d8c944b4, type: 2}
 --- !u!114 &992283398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10029,7 +10029,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef0653924cda7804c8ce3e1ed92e88cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefeb: {fileID: 171718, guid: b6566c736ea04f640b4df2d720d13bbd, type: 2}
+  oBulletPref: {fileID: 171718, guid: b6566c736ea04f640b4df2d720d13bbd, type: 2}
 --- !u!114 &992283399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10065,7 +10065,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9df6d01606ec8da4ca782bb2055abfb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grenade: {fileID: 129404, guid: 07b846c859f670249aac249c7858385e, type: 2}
+  oGrenade: {fileID: 129404, guid: 07b846c859f670249aac249c7858385e, type: 2}
 --- !u!114 &992283401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10079,7 +10079,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fillGaugeBar: {fileID: 1039644281}
-  _smash: {fileID: 928720284}
 --- !u!54 &992283402
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10108,7 +10107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9214e979b923ac4f833966d73e05216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blinkEffect: {fileID: 1312740074}
+  oBlinkEffect: {fileID: 1312740074}
 --- !u!114 &992283404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10121,9 +10120,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d474cfdb19569ab47bdf4ff3268ad447, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPref: {fileID: 171718, guid: b6566c736ea04f640b4df2d720d13bbd, type: 2}
-  flarePref: {fileID: 100006, guid: 0438351a6e6422d43a09930e9be00ee9, type: 2}
-  firePos: {fileID: 863693318}
+  oBulletPref: {fileID: 171718, guid: b6566c736ea04f640b4df2d720d13bbd, type: 2}
+  oFlarePref: {fileID: 100006, guid: 0438351a6e6422d43a09930e9be00ee9, type: 2}
+  trFire: {fileID: 863693318}
 --- !u!136 &992283405
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -16422,10 +16421,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9ce915c551ac4d418a08941c860c221, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dist: 4
-  zoomDist: 1.5
-  right: .400000006
-  dampTrace: 120
+  DIST: 2
+  ZOOM_DIST: 1
+  RIGHT: .300000012
+  DAMP_TRACE: 20
 --- !u!81 &1465654136
 AudioListener:
   m_ObjectHideFlags: 0

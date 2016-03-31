@@ -42,8 +42,8 @@ public class ToChargeDP : MonoBehaviour {
     {
         if(coll.gameObject.tag == Tags.Player)
         {
-            T_Mgr T_mgr = coll.GetComponent<T_Mgr>();
-            T_mgr.setDP(100);
+            T_Mgr t_Mgr = coll.GetComponent<T_Mgr>();
+            t_Mgr.SetDP(100);
         }
         //else
             //sForObject.OnTriggerDamage(coll, gameObject, iHp);

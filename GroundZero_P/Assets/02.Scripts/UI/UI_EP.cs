@@ -18,6 +18,6 @@ public class UI_EP : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        sliderEP.value = t_mgr.getEP();
+        sliderEP.value = t_mgr.GetEP();
     }
 }

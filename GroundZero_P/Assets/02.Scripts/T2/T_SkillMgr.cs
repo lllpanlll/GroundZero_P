@@ -20,9 +20,9 @@ public class T_SkillMgr : MonoBehaviour {
         fCoolTime = 0.0f;
     }
 
-    protected virtual void InputCommend(T_Mgr.SkillType type, int decPoint)
+    protected virtual void InputCommand (T_Mgr.SkillType type, int decPoint)
     {        
-        if (T_Mgr.GetInstance().getCtrlPossible().Skill == true && bCoolTime == false)
+        if (T_Mgr.GetInstance().GetCtrlPossible().Skill == true && bCoolTime == false)
         {
             //point가 성공적으로 소모 된다면,
             if(T_Mgr.GetInstance().DecreaseSkillPoint(type, decPoint))
@@ -41,9 +41,9 @@ public class T_SkillMgr : MonoBehaviour {
     {
         this.StartCoroutine(BeforeDelayTimer(time));
     }
-    protected virtual void Action(float time)
+    protected virtual void Execute(float time)
     {
-        this.StartCoroutine(ActionTimer(time));
+        this.StartCoroutine(ExecuteTimer(time));
     }
     protected virtual void AfterActionDelay(float time)
     {
@@ -62,21 +62,19 @@ public class T_SkillMgr : MonoBehaviour {
         bCoolTime = false;
         fCoolTime = 0.0f;
     }
-    protected bool isAfterDelay() { return bAfterDelay; }
-    protected bool isBeforeDelay() { return bBeforeDelay; }
-    protected bool isAction() { return bAction; }
-    protected bool isUsing() { return bUsing; }
-    protected bool isCoolTime() { return bCoolTime; }
+    protected bool IsAfterDelay() { return bAfterDelay; }
+    protected bool IsBeforeDelay() { return bBeforeDelay; }
+    protected bool IsExecute() { return bAction; }
+    protected bool IsRunning() { return bUsing; }
+    protected bool IsCoolTime() { return bCoolTime; }
 
-    protected void EndAction() { bAction = false;  bAfterDelay = true; }
-    protected void setAction(bool b) { bAction = b; }
-    protected void setAfterDelay(bool b) { bAfterDelay = b; }
-    protected void setCoolTime(float time) { fCoolTime = time; }
-    protected T_Mgr getT_Mgr() { return T_Mgr.GetInstance(); }
+    protected void FinishExecute() { bAction = false;  bAfterDelay = true; }
+    protected void SetAction(bool b) { bAction = b; }
+    protected void SetAfterDelay(bool b) { bAfterDelay = b; }
+    protected void SetCoolTime(float time) { fCoolTime = time; }
     
     IEnumerator BeforeDelayTimer(float time)
-    {
-        
+    {        
         //선 딜레이 애니메이션 플레이
 
         //if문에 한번만 작동 되도록 bBeforeDelay를 바로 false시켜준다.
@@ -86,7 +84,7 @@ public class T_SkillMgr : MonoBehaviour {
        
         bAction = true;
     }
-    IEnumerator ActionTimer(float time)
+    IEnumerator ExecuteTimer(float time)
     {
         //애니메이션 플레이
 

@@ -20,7 +20,7 @@ public class UI_DP_PP : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        sliderDP.value = t_mgr.getDP();
-        sliderPP.value = t_mgr.getPP();
+        sliderDP.value = t_mgr.GetDP();
+        sliderPP.value = t_mgr.GetPP();
     }
 }

@@ -14,7 +14,7 @@ public class T_Stat{
     public const int MAX_AP = 100;
     public const int MAX_MAGAZINE = 60;
 
-    public const float MAX_EP = 100.0f;
+    public const float MAX_EP = 100;
     public const int MAX_PP = 100;
 
      

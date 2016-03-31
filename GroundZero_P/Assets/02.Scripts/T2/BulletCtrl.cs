@@ -3,23 +3,21 @@ using System.Collections;
 
 public class BulletCtrl : MonoBehaviour {
 
-    private float speed;
+    private float fSpeed;
 
-    public float LifeTime = 3.0f;
+    public float lifeTime = 3.0f;
 
-    private float lifeTime;
     private float lifeTimer;
 
-    private T_Attack T_attack;
+    private T_Attack t_Attack;
 
     void Awake()
     {
-        speed = 100.0f;
-        T_attack = GameObject.FindGameObjectWithTag(Tags.Player).GetComponent<T_Attack>();
+        fSpeed = 100.0f;
+        t_Attack = GameObject.FindGameObjectWithTag(Tags.Player).GetComponent<T_Attack>();
     }
 
     void OnEnable() {
-        lifeTime = LifeTime;
         lifeTimer = 0.0f;
     }
 
@@ -34,7 +32,7 @@ public class BulletCtrl : MonoBehaviour {
 
         }
 
-        T_attack.setFlareEffect(col.contacts[0].point);
+        t_Attack.SetFlareEffect(col.contacts[0].point);
         gameObject.SetActive(false);
 
     }
@@ -47,11 +45,11 @@ public class BulletCtrl : MonoBehaviour {
 
     void FixedUpdate () {
 
-        transform.Translate(Vector3.forward * speed * Time.deltaTime, Space.Self);
+        transform.Translate(Vector3.forward * fSpeed * Time.deltaTime, Space.Self);
 
         if (lifeTimer > lifeTime)
         {
-            T_attack.setFlareEffect(transform.position);
+            t_Attack.SetFlareEffect(transform.position);
             gameObject.SetActive(false);
         }
         else

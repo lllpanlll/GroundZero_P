@@ -21,7 +21,7 @@ public class T_Animation : MonoBehaviour {
     public Animation _animation;
     public Transform _spine;
 
-    private T_MoveCtrl T_moveCtrl;
+    private T_MoveCtrl t_MoveCtrl;
     private T_Attack T_attack;
 
     private T_MoveCtrl.MoveFlag moveFlag;
@@ -35,7 +35,7 @@ public class T_Animation : MonoBehaviour {
 
         _animation.Play();
 
-        T_moveCtrl = GetComponent<T_MoveCtrl>();
+        t_MoveCtrl = GetComponent<T_MoveCtrl>();
         T_attack = GetComponent<T_Attack>();
 
         
@@ -56,8 +56,8 @@ public class T_Animation : MonoBehaviour {
 
 
     void Update () {
-        moveFlag = T_moveCtrl.getMoveFlag();
-        moveState = T_moveCtrl.getMoveState();
+        moveFlag = t_MoveCtrl.GetMoveFlag();
+        moveState = t_MoveCtrl.GetMoveState();
 
 
         //run상태 이동,

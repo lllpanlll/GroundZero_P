@@ -9,7 +9,7 @@ public class T_MoveCtrl : MonoBehaviour {
     private float h = 0.0f;
     private float v = 0.0f;
 
-    private T_Mgr T_mgr;
+    private T_Mgr t_Mgr;
     private Transform modelTr;
 
     //초기화 변수
@@ -27,7 +27,7 @@ public class T_MoveCtrl : MonoBehaviour {
         public bool right;
         public bool left;
     }
-    MoveFlag bMove;
+    MoveFlag moveFlag;
 
     #region<전력질주 방향전환>
     //회피시 타겟 각도로도 사용됨.
@@ -46,7 +46,7 @@ public class T_MoveCtrl : MonoBehaviour {
         fMoveSpeed = T_Stat.MAX_RUN_MOVE;
         fMaxMoveSpeed = T_Stat.MAX_RUN_MOVE;
 
-        T_mgr = GetComponent<T_Mgr>();
+        t_Mgr = GetComponent<T_Mgr>();
         modelTr = GameObject.FindGameObjectWithTag(Tags.PlayerModel).transform;
 
         moveState = MoveState.Run;
@@ -72,7 +72,7 @@ public class T_MoveCtrl : MonoBehaviour {
         Vector3 moveDir = (Vector3.forward * v) + (Vector3.right * h);
 
         //전력질주의 캐릭터 방향을 정하는 'targetRot'변수를 설정해주는 함수,
-        TargetRotCalc();
+        CalcTargetRot();
 
         #region<switch(moveState)>
         switch (moveState)
@@ -99,20 +99,20 @@ public class T_MoveCtrl : MonoBehaviour {
         #endregion
 
         #region<Groggy>
-        if (T_mgr.getEP() < 0.0f)
+        if (t_Mgr.GetEP() < 0.0f)
             bGroggy = true;
 
         if (bGroggy)
         {
             if (groggyTimer < groggyTime)
             {
-                if (T_mgr.getCtrlPossible().Sprint == true)
-                    T_mgr.setCtrlPossible(T_Mgr.CtrlPossibleIndex.Sprint, false);
+                if (t_Mgr.GetCtrlPossible().Sprint == true)
+                    t_Mgr.SetCtrlPossible(T_Mgr.CtrlPossibleIndex.Sprint, false);
                 groggyTimer += Time.deltaTime;
             }
             else
             {
-                T_mgr.setCtrlPossible(T_Mgr.CtrlPossibleIndex.Sprint, true);
+                t_Mgr.SetCtrlPossible(T_Mgr.CtrlPossibleIndex.Sprint, true);
                 bGroggy = false;
                 groggyTimer = 0.0f;
             }
@@ -120,32 +120,32 @@ public class T_MoveCtrl : MonoBehaviour {
         #endregion
 
         #region<Input WASD>
-        if (Input.GetKeyUp(KeyCode.W)) { bMove.forward = false; h = 0.0f; }
-        if (Input.GetKeyUp(KeyCode.S)) { bMove.backward = false; h = 0.0f; }
-        if (Input.GetKeyUp(KeyCode.D)) { bMove.right = false; v = 0.0f; }
-        if (Input.GetKeyUp(KeyCode.A)) { bMove.left = false; v = 0.0f; }
+        if (Input.GetKeyUp(KeyCode.W)) { moveFlag.forward = false; h = 0.0f; }
+        if (Input.GetKeyUp(KeyCode.S)) { moveFlag.backward = false; h = 0.0f; }
+        if (Input.GetKeyUp(KeyCode.D)) { moveFlag.right = false; v = 0.0f; }
+        if (Input.GetKeyUp(KeyCode.A)) { moveFlag.left = false; v = 0.0f; }
 
-        if (T_mgr.getCtrlPossible().Run == true)
+        if (t_Mgr.GetCtrlPossible().Run == true)
         {
-            if (Input.GetKey(KeyCode.W)) bMove.forward = true;
-            if (Input.GetKey(KeyCode.S)) bMove.backward = true;
-            if (Input.GetKey(KeyCode.D)) bMove.right = true;
-            if (Input.GetKey(KeyCode.A)) bMove.left = true;
+            if (Input.GetKey(KeyCode.W)) moveFlag.forward = true;
+            if (Input.GetKey(KeyCode.S)) moveFlag.backward = true;
+            if (Input.GetKey(KeyCode.D)) moveFlag.right = true;
+            if (Input.GetKey(KeyCode.A)) moveFlag.left = true;
         }
         else
         {
-            bMove.forward = false;
-            bMove.backward = false;
-            bMove.right = false;
-            bMove.left = false;
+            moveFlag.forward = false;
+            moveFlag.backward = false;
+            moveFlag.right = false;
+            moveFlag.left = false;
         }
         #endregion
 
         #region<MoveState Change>
         //걷기상태가 가능상태여야 전력질주도 가능하도록 한다.
-        if (T_mgr.getCtrlPossible().Run == true)
+        if (t_Mgr.GetCtrlPossible().Run == true)
         {
-            if (bMove.forward || bMove.backward || bMove.right || bMove.left)
+            if (moveFlag.forward || moveFlag.backward || moveFlag.right || moveFlag.left)
             {
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
@@ -162,10 +162,10 @@ public class T_MoveCtrl : MonoBehaviour {
 
         #endregion
 
-        if (T_mgr.getCtrlPossible().Run == true)
+        if (t_Mgr.GetCtrlPossible().Run == true)
         {
             //이동 처리
-            if (bMove.forward || bMove.backward || bMove.right || bMove.left)
+            if (moveFlag.forward || moveFlag.backward || moveFlag.right || moveFlag.left)
             {
                 //플레이어를 카메라 정면방향으로 각도를 유지시킨다.
                 float CamRot = Camera.main.transform.eulerAngles.y;
@@ -233,50 +233,50 @@ public class T_MoveCtrl : MonoBehaviour {
     }
 
 
-    void TargetRotCalc()
+    void CalcTargetRot()
     {
         //캐릭터 기준 rotation값에 카메라의 rotation값을 더해준다.
         float CamRot = Camera.main.transform.eulerAngles.y;
 
-        if (bMove.forward)
+        if (moveFlag.forward)
         {
-            if (bMove.right)          //전방 우측 대각선
+            if (moveFlag.right)          //전방 우측 대각선
                 fTargetRot = 45.0f + CamRot;
-            else if (bMove.left)    //전방 좌측 대각선
+            else if (moveFlag.left)    //전방 좌측 대각선
                 fTargetRot = 315.0f + CamRot;
             else                    //전방
                 fTargetRot = 0.0f + CamRot;
         }
-        else if (bMove.backward)
+        else if (moveFlag.backward)
         {
-            if (bMove.right)          //후방 우측 대각선
+            if (moveFlag.right)          //후방 우측 대각선
                 fTargetRot = 135.0f + CamRot;
-            else if (bMove.left)    //후방 좌측 대각선
+            else if (moveFlag.left)    //후방 좌측 대각선
                 fTargetRot = 225.0f + CamRot;
             else                    //후방
                 fTargetRot = 180.0f + CamRot;
         }
-        else if (bMove.right)
+        else if (moveFlag.right)
         {
-            if (bMove.forward)
+            if (moveFlag.forward)
                 fTargetRot = 45.0f + CamRot;
-            else if (bMove.backward)
+            else if (moveFlag.backward)
                 fTargetRot = 135.0f + CamRot;
             else                     //우측
                 fTargetRot = 90.0f + CamRot;
         }
-        else if (bMove.left)
+        else if (moveFlag.left)
         {
-            if (bMove.forward)
+            if (moveFlag.forward)
                 fTargetRot = 315.0f + CamRot;
-            else if (bMove.backward)
+            else if (moveFlag.backward)
                 fTargetRot = 225.0f + CamRot;
             else                     //좌측
                 fTargetRot = 270.0f + CamRot;
         }
     }
-    public float getTargetRot() { return fTargetRot; }
-    public MoveState getMoveState() { return moveState; }
-    public void setMoveState(MoveState val) { moveState = val; }
-    public MoveFlag getMoveFlag() { return bMove;    }
+    public float GetTargetRot() { return fTargetRot; }
+    public MoveState GetMoveState() { return moveState; }
+    public void SetMoveState(MoveState val) { moveState = val; }
+    public MoveFlag GetMoveFlag() { return moveFlag;    }
 } 
