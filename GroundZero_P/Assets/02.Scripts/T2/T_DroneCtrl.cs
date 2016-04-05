@@ -18,8 +18,8 @@ public class T_DroneCtrl : T_SkillMgr {
 
     private float beforeDelayTime = 0.0f;
     private float actionTime = 2.0f;
-    private float afterDelayTime = 0.2f;
-    private float coolTime = 0.2f;
+    private float afterDelayTime = 0.0f;
+    private float coolTime = 0.0f;
 
     //드론! 마지막 일격!
     private bool bFinishAttack = false;
@@ -55,7 +55,12 @@ public class T_DroneCtrl : T_SkillMgr {
                 AfterActionDelay(afterDelayTime);
         }
         else
-            CoolTimeDelay();
+        {
+            if (base.IsRunning())
+            {
+                base.CoolTimeDelay();
+            }
+        }
     }
 
     protected override void InputCommand(T_Mgr.SkillType type, int decPoint)

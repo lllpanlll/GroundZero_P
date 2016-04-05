@@ -121,7 +121,7 @@ public class T_Mgr : MonoBehaviour
                 {
                     //dp -= iDamage;
                     //피격 지속시간은 나중에 피격상태에 따라 달라지도록 구현헤야 할 듯,
-                    StartCoroutine(BeShotTimer(2.0f));
+                    //StartCoroutine(BeShotTimer(2.0f));
                 }
                 else
                 {
@@ -134,6 +134,15 @@ public class T_Mgr : MonoBehaviour
                 print("쥬금");
             }
         }
+        if(coll.gameObject.tag == Tags.Floor)
+        {
+            print("coll");
+        }
+    }
+
+    void OnCollisionStay(Collision coll)
+    {
+        print("coll");
     }
 
     public float GetEP() { return ep; }

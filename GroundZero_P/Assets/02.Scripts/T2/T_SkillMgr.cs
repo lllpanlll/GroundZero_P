@@ -105,11 +105,11 @@ public class T_SkillMgr : MonoBehaviour {
         //후 딜레이 애니메이션 정지?
 
         T_Mgr.GetInstance().ChangeState(T_Mgr.State.idle);
-        bCoolTime = true;
-        bUsing = false;
+        bCoolTime = true;        
     }
     IEnumerator CoolTimer(float time)
-    {        
+    {
+        bUsing = false;
         yield return new WaitForSeconds(time);
         print("쿨타임 종료");
         bCoolTime = false;        

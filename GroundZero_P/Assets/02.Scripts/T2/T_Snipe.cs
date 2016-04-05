@@ -27,7 +27,7 @@ public class T_Snipe : T_SkillMgr {
     private float beforeDelayTime = 0.0f;
     private float actionTime = 0.0f;
     private float afterDelayTime = 1.0f;
-    private float coolTime = 0.2f;
+    private float coolTime = 0.0f;
 
     private Ray fireRay;
 
@@ -70,7 +70,10 @@ public class T_Snipe : T_SkillMgr {
         }
         else
         {
-            CoolTimeDelay();
+            if (base.IsRunning())
+            {
+                base.CoolTimeDelay();
+            }
         }
 
         if (bZoom)

@@ -49,6 +49,10 @@ public class FollowCam : MonoBehaviour {
         }
         #endregion
 
+
+        //transform.position = Vector3.Lerp(transform.position, trTarget.position - (trTarget.forward * fDist) + (transform.right * RIGHT),
+        //    Time.deltaTime * DAMP_TRACE);
+
         transform.position = trTarget.position - (trTarget.forward * fDist) + (transform.right * RIGHT);
 
         transform.LookAt((trTarget.position + (trTarget.right * fRight)));

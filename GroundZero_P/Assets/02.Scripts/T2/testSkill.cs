@@ -4,15 +4,18 @@ using System.Collections;
 public class testSkill : T_SkillMgr {
     private T_MoveCtrl t_MoveCtrl;
     private T_Mgr t_Mgr;
+    private CharacterController controller;
 
     private GameObject playerModel;
     public GameObject blinkEffect;
 
+    Vector3 moveDir = Vector3.zero;
+
     private int iDecEP = 10;
 
     private float beforeDelayTime = 0.0f;
-    private float afterDelayTime = 0.2f;
-    private float coolTime = 0.2f;
+    private float afterDelayTime = 0.0f;
+    private float coolTime = 0.0f;
 
     private float blinkTime = 0.2f;
     private float blinkDist = 10.0f;
@@ -22,6 +25,7 @@ public class testSkill : T_SkillMgr {
         t_MoveCtrl = GetComponent<T_MoveCtrl>();
         playerModel = GameObject.FindGameObjectWithTag(Tags.PlayerModel);
         t_Mgr = GetComponent<T_Mgr>();
+        controller = GetComponent<CharacterController>();
 
         blinkSpeed = blinkDist / blinkTime;
 
@@ -34,9 +38,9 @@ public class testSkill : T_SkillMgr {
             base.SkillCancel();
         }
 
-        if (!IsCoolTime())
+        if (!base.IsCoolTime())
         {
-            if (Input.GetKeyDown(KeyCode.Space) && !base.IsRunning())
+            if (Input.GetKeyDown(KeyCode.Space))
                 InputCommand(T_Mgr.SkillType.EP, iDecEP);
             if (base.IsBeforeDelay())
                 BeforeActionDelay(beforeDelayTime);
@@ -44,16 +48,20 @@ public class testSkill : T_SkillMgr {
                 Execute(blinkTime);
             if (base.IsAfterDelay())
                 AfterActionDelay(afterDelayTime);
-        }
+        } 
         else
         {
-            base.CoolTimeDelay();
+            if (base.IsRunning())
+            {
+                base.CoolTimeDelay();
+            }
         }
     }
 
     protected override void InputCommand(T_Mgr.SkillType type, int decPoint)
     {
         base.InputCommand(type, decPoint);
+
     }
     protected override void BeforeActionDelay(float time)
     {
@@ -79,8 +87,9 @@ public class testSkill : T_SkillMgr {
 
         //플레이어와 캐릭터(모델)를 회전시킨다.
         transform.rotation = Quaternion.Euler(0.0f, targetRot, 0.0f);
-        playerModel.transform.rotation = transform.rotation;        
-        
+        playerModel.transform.rotation = transform.rotation;
+
+        moveDir = transform.forward;
         //이동 코루틴.
         this.StartCoroutine(StartBlink(time));
 
@@ -114,8 +123,10 @@ public class testSkill : T_SkillMgr {
         
         while(time > timeConut)
         {
-            transform.Translate(transform.forward * Time.deltaTime * blinkSpeed, Space.World);            
-
+            //transform.Translate(transform.forward * Time.deltaTime * blinkSpeed, Space.World);
+            
+            moveDir.y -= 20.0f * Time.deltaTime;
+            controller.Move(moveDir * Time.deltaTime * blinkSpeed);
             yield return new WaitForEndOfFrame();
 
             timeConut += Time.deltaTime;

@@ -20,5 +20,5 @@ public class T_Stat{
      
     //public const float MAX_AIM_MOVE = 5.0f;
     public const float MAX_RUN_MOVE = 10.0f;
-    public const float MAX_SPRINT_MOVE = 30.0f;
+    public const float MAX_SPRINT_MOVE = 20.0f;
 }

@@ -4,6 +4,8 @@ using System.Collections;
 public class T_BlinkCounter : T_SkillMgr {
     private T_MoveCtrl t_MoveCtrl;  //이동상태 변경을 위함
     private T_Mgr t_Mgr;
+    private CharacterController controller;
+    private Vector3 moveDir = Vector3.zero;
 
     private GameObject oPlayerModel;  //플레이어의 모습을 사라지게 하기 위함
 
@@ -11,7 +13,7 @@ public class T_BlinkCounter : T_SkillMgr {
 
     private float beforeDelayTime = 0.0f;
     private float afterDelayTime = 0.2f;
-    private float coolTime = 0.2f;
+    private float coolTime = 1.2f;
 
     private float blinkTime = 0.2f;
     private float fBlinkDist = 15.0f;
@@ -23,6 +25,7 @@ public class T_BlinkCounter : T_SkillMgr {
         t_MoveCtrl = GetComponent<T_MoveCtrl>();
         t_Mgr = GetComponent<T_Mgr>();
         oPlayerModel = GameObject.FindGameObjectWithTag(Tags.PlayerModel);
+        controller = GetComponent<CharacterController>();
 
         fBlinkSpeed = fBlinkDist / blinkTime;
 
@@ -50,7 +53,10 @@ public class T_BlinkCounter : T_SkillMgr {
         }
         else
         {
-            CoolTimeDelay();
+            if (base.IsRunning())
+            {
+                base.CoolTimeDelay();
+            }
         }
     }
 
@@ -82,6 +88,7 @@ public class T_BlinkCounter : T_SkillMgr {
         //회피가 끝난 후, 이동속도를 '처음'부터 가속하기 위해 moveState를 Stop으로 해 놓는다.
         t_MoveCtrl.SetMoveState(T_MoveCtrl.MoveState.Stop);
 
+        moveDir = transform.forward;
         //이동 코루틴.
         this.StartCoroutine(StartBlinkCounter(time));
 
@@ -111,8 +118,9 @@ public class T_BlinkCounter : T_SkillMgr {
         while (time > timeConut)
         {
             print("이동");
-            transform.Translate(transform.forward * Time.deltaTime * fBlinkSpeed, Space.World);
-
+            //transform.Translate(transform.forward * Time.deltaTime * fBlinkSpeed, Space.World);
+            moveDir.y -= 20.0f * Time.deltaTime;
+            controller.Move(moveDir * Time.deltaTime * fBlinkSpeed);
             yield return new WaitForEndOfFrame();
 
             timeConut += Time.deltaTime;

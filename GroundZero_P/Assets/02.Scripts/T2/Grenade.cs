@@ -50,6 +50,22 @@ public class Grenade : MonoBehaviour {
 
     }
 
+    void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.layer == LayerMask.NameToLayer(Layers.MonsterHitCollider))
+        {
+            if (col.gameObject.layer == LayerMask.NameToLayer(Layers.MonsterHitCollider))
+            {
+                col.gameObject.GetComponent<MonsterHitCtrl>().OnHitMonster(50);
+                oEffect.SetActive(true);
+                gameObject.SetActive(false);
+            }
+
+        }
+        oEffect.SetActive(true);
+        gameObject.SetActive(false);
+    }
+
     void Update()
     {
         if (lifeTimer > lifeTime)
