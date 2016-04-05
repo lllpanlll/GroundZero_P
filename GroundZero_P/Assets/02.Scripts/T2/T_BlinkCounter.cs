@@ -119,7 +119,7 @@ public class T_BlinkCounter : T_SkillMgr {
         {
             print("이동");
             //transform.Translate(transform.forward * Time.deltaTime * fBlinkSpeed, Space.World);
-            moveDir.y -= 20.0f * Time.deltaTime;
+            //moveDir.y -= 20.0f * Time.deltaTime;
             controller.Move(moveDir * Time.deltaTime * fBlinkSpeed);
             yield return new WaitForEndOfFrame();
 

@@ -125,7 +125,7 @@ public class testSkill : T_SkillMgr {
         {
             //transform.Translate(transform.forward * Time.deltaTime * blinkSpeed, Space.World);
             
-            moveDir.y -= 20.0f * Time.deltaTime;
+            //moveDir.y -= 20.0f * Time.deltaTime;
             controller.Move(moveDir * Time.deltaTime * blinkSpeed);
             yield return new WaitForEndOfFrame();
 

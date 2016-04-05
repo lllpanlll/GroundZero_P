@@ -45,6 +45,7 @@ public class T_Mgr : MonoBehaviour
     CtrlPossible ctrlPossible;
 
     private T_MoveCtrl t_MoveCtrl;
+    private CharacterController controller;
 
     #region <달리기 상태에 따른 ep증감>
     private float fDecEP = 0.4f, fIncEP = 0.6f;
@@ -65,6 +66,7 @@ public class T_Mgr : MonoBehaviour
         curLayerState = LayerState.normal;
 
         t_MoveCtrl = GetComponent<T_MoveCtrl>();
+        controller = GetComponent<CharacterController>();
 
         //마우스 커서 숨기기
         //Cursor.visible = false;
@@ -105,6 +107,11 @@ public class T_Mgr : MonoBehaviour
                 EpDecrease();
             }
         }
+
+        //if(!controller.isGrounded)
+        //{
+            controller.Move(-transform.up * Time.deltaTime * 20.0f);
+        //}
     }
 
     void OnTriggerEnter(Collider coll)
@@ -119,9 +126,9 @@ public class T_Mgr : MonoBehaviour
             {
                 if (dp > iDamage)
                 {
-                    //dp -= iDamage;
+                    dp -= iDamage;
                     //피격 지속시간은 나중에 피격상태에 따라 달라지도록 구현헤야 할 듯,
-                    //StartCoroutine(BeShotTimer(2.0f));
+                    StartCoroutine(BeShotTimer(0.2f));
                 }
                 else
                 {

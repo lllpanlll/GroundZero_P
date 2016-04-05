@@ -30,6 +30,8 @@ public class T_MoveCtrl : MonoBehaviour {
     }
     MoveFlag moveFlag;
 
+    public GameObject oSprintEffect;
+
     #region<전력질주 방향전환>
     //회피시 타겟 각도로도 사용됨.
     float fTargetRot = 0.0f;
@@ -53,6 +55,9 @@ public class T_MoveCtrl : MonoBehaviour {
         controller = GetComponent<CharacterController>();
 
         moveState = MoveState.Stop;
+
+        oSprintEffect.SetActive(true);
+        //oSprintEffect.GetComponentInChildren<ParticleSystem>().playOnAwake = false;
     }
 
     void OnEnable()
@@ -84,6 +89,8 @@ public class T_MoveCtrl : MonoBehaviour {
                 moveDir = Vector3.zero;
                 //h = v = 0.0f;
                 fMoveSpeed = 5.0f;
+                oSprintEffect.SetActive(false);
+                //oSprintEffect.GetComponentInChildren<ParticleSystem>().playOnAwake = false;
                 break;
             case MoveState.Run:
                 //fMoveSpeed가 Walk상태에서의 MaxSpeed보다 높을 떄, 즉 Run상태의 이동속도 구간이였다면.
@@ -93,11 +100,18 @@ public class T_MoveCtrl : MonoBehaviour {
                     fMoveSpeedDamp = 10.0f;
                 else
                     fMoveSpeedDamp = 1.0f;
-                fMaxMoveSpeed = T_Stat.MAX_RUN_MOVE;                
+                fMaxMoveSpeed = T_Stat.MAX_RUN_MOVE;
+
+                oSprintEffect.SetActive(false);
+                //oSprintEffect.GetComponentInChildren<ParticleSystem>().playOnAwake = false;
                 break;
             case MoveState.Sprint:
                 fMoveSpeedDamp = 0.8f;
-                fMaxMoveSpeed = T_Stat.MAX_SPRINT_MOVE;                
+                fMaxMoveSpeed = T_Stat.MAX_SPRINT_MOVE;
+               
+                oSprintEffect.SetActive(true);
+                oSprintEffect.transform.rotation = trPlayerModel.rotation;
+                // oSprintEffect.GetComponentInChildren<ParticleSystem>().playOnAwake = true;
                 break;
         }
         #endregion
@@ -229,7 +243,7 @@ public class T_MoveCtrl : MonoBehaviour {
 
                 fMoveSpeed = Mathf.Lerp(fMoveSpeed, fMaxMoveSpeed, Time.deltaTime * fMoveSpeedDamp);
                 //transform.Translate(moveDir.normalized * Time.deltaTime * fMoveSpeed, Space.Self);
-                moveDir.y -= 20.0f * Time.deltaTime;
+                //moveDir.y -= 20.0f * Time.deltaTime;
                 moveDir = transform.TransformDirection(moveDir);
                 controller.Move(moveDir * fMoveSpeed * Time.deltaTime);
             }

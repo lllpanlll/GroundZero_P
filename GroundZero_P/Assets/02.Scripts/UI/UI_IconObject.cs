@@ -26,8 +26,8 @@ public class UI_IconObject : MonoBehaviour {
         // obj
         oX = transform.position.x - oPlayer.transform.position.x;
         oZ = transform.position.z - oPlayer.transform.position.z;
-        objX = (oX * 5f);
-        objZ = (oZ * 5f);
+        objX = (oX * 1.5f);
+        objZ = (oZ * 1.5f);
         oIconObjPref.transform.localPosition = new Vector3(objX, objZ);
         oIconObjPref.transform.rotation = Quaternion.Euler(0, 0, -oUIMap.transform.rotation.z);
     }
