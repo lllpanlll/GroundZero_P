@@ -29,6 +29,6 @@ public class UI_IconObject : MonoBehaviour {
         objX = (oX * 1.5f);
         objZ = (oZ * 1.5f);
         oIconObjPref.transform.localPosition = new Vector3(objX, objZ);
-        oIconObjPref.transform.rotation = Quaternion.Euler(0, 0, -oUIMap.transform.rotation.z);
+        oIconObjPref.transform.rotation = Quaternion.identity;
     }
 }
