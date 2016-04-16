@@ -108,10 +108,7 @@ public class T_Mgr : MonoBehaviour
             }
         }
 
-        //if(!controller.isGrounded)
-        //{
-            controller.Move(-transform.up * Time.deltaTime * 20.0f);
-        //}
+        controller.Move(-transform.up * Time.deltaTime * 20.0f);
     }
 
     void OnTriggerEnter(Collider coll)

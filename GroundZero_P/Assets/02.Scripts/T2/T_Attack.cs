@@ -134,7 +134,7 @@ public class T_Attack : MonoBehaviour
         #endregion
     }
     
-    void Fire()
+    public void Fire()
     {
         bFire = true;
         attackTimer = 0.0f;        
