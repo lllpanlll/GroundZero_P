@@ -119,6 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0059fb6d5620fd4abe79a472eebf474, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fSpeed: 300
   lifeTime: 3
 --- !u!135 &13528042
 SphereCollider:
@@ -186,6 +187,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: lifeTime
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: fSpeed
+      value: 300
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

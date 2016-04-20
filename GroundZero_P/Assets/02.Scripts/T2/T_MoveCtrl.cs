@@ -13,9 +13,6 @@ public class T_MoveCtrl : MonoBehaviour {
     private Transform trPlayerModel;
     private CharacterController controller;
 
-    //초기화 변수
-    public float fInitRotSpeed = 200.0f;
-
     //실제 사용 변수
     private float fMoveSpeed;
     private float fMaxMoveSpeed;
@@ -32,7 +29,7 @@ public class T_MoveCtrl : MonoBehaviour {
 
     public GameObject oSprintEffect;
 
-    #region<전력질주 방향전환>
+    #region<방향전환>
     //회피시 타겟 각도로도 사용됨.
     float fTargetRot = 0.0f;
     private float fSprintRot = 0.0f;  //캐릭터의 y축 각도 값.(전력질주)
@@ -41,7 +38,13 @@ public class T_MoveCtrl : MonoBehaviour {
     public float fCharRotSpeed = 15.0f;
     //private bool bOppositRotation = false;  //반대방향 회전 여부.
     #endregion
-        
+
+
+    private float fOrizinFOV;
+    public float fSprintFOV = 80.0f;
+    public float fFOV_ZoomSpeed = 3.0f;
+    private Camera mainCamera;
+
     //그로기 상태 변수
     bool bGroggy;
     float groggyTimer = 0.0f, groggyTime = 2.0f;
@@ -53,6 +56,8 @@ public class T_MoveCtrl : MonoBehaviour {
         t_Mgr = GetComponent<T_Mgr>();
         trPlayerModel = GameObject.FindGameObjectWithTag(Tags.PlayerModel).GetComponent<Transform>();
         controller = GetComponent<CharacterController>();
+        mainCamera = Camera.main;
+        fOrizinFOV = mainCamera.fieldOfView;
 
         moveState = MoveState.Stop;
 
@@ -103,15 +108,13 @@ public class T_MoveCtrl : MonoBehaviour {
                 fMaxMoveSpeed = T_Stat.MAX_RUN_MOVE;
 
                 oSprintEffect.SetActive(false);
-                //oSprintEffect.GetComponentInChildren<ParticleSystem>().playOnAwake = false;
                 break;
             case MoveState.Sprint:
                 fMoveSpeedDamp = 0.8f;
                 fMaxMoveSpeed = T_Stat.MAX_SPRINT_MOVE;
-               
-                oSprintEffect.SetActive(true);
-                oSprintEffect.transform.rotation = trPlayerModel.rotation;
-                // oSprintEffect.GetComponentInChildren<ParticleSystem>().playOnAwake = true;
+
+                if (fMoveSpeed > 12.0f)
+                    oSprintEffect.SetActive(true);
                 break;
         }
         #endregion
@@ -192,16 +195,16 @@ public class T_MoveCtrl : MonoBehaviour {
                 float CamRot = Camera.main.transform.eulerAngles.y;
                 transform.rotation = Quaternion.Euler(0.0f, CamRot, 0.0f);
 
-                if (moveState == MoveState.Run)
-                {
-                    //전력질주일 때, 바뀌어버린 캐릭터(모델)의 각도를 정면으로 '보간'하며 바꾸어준다.
-                    fRunRot = Mathf.LerpAngle(fRunRot, CamRot, Time.deltaTime * fCharRotSpeed + (fCharRotSpeed * 0.01f));
-                    trPlayerModel.rotation = Quaternion.Euler(0.0f, fRunRot, 0.0f);
+                //if (moveState == MoveState.Run)
+                //{
+                //    //전력질주일 때, 바뀌어버린 캐릭터(모델)의 각도를 정면으로 '보간'하며 바꾸어준다.
+                //    fRunRot = Mathf.LerpAngle(fRunRot, CamRot, Time.deltaTime * fCharRotSpeed + (fCharRotSpeed * 0.01f));
+                //    trPlayerModel.rotation = Quaternion.Euler(0.0f, fRunRot, 0.0f);
 
-                    //transform.Rotate(Vector3.up * Time.deltaTime * fRotSpeed * Input.GetAxis("Mouse X"));
-                }
-                else if (moveState == MoveState.Sprint)
-                {
+                //    //transform.Rotate(Vector3.up * Time.deltaTime * fRotSpeed * Input.GetAxis("Mouse X"));
+                //}
+                //else if (moveState == MoveState.Sprint)
+                //{
                     #region<180도 회전>
                     //float fCurRot = transform.eulerAngles.y;
                     //fCurRot = Rotation360Clamp(fCurRot);
@@ -236,14 +239,24 @@ public class T_MoveCtrl : MonoBehaviour {
                     //    fSprintRot = Mathf.LerpAngle(fSprintRot, fTargetRot, Time.deltaTime * fCharRotSpeed);
                     #endregion
 
-                    //캐릭터를 기준으로 8방향 각도가 구해진 fTargetRot으로 보간하여 fSprintRot을 구한다.
-                    fSprintRot = Mathf.LerpAngle(fSprintRot, fTargetRot, Time.deltaTime * fCharRotSpeed + (fCharRotSpeed * 0.01f));
-                    trPlayerModel.rotation = Quaternion.Euler(0.0f, fSprintRot, 0.0f);
-                }             
+                //캐릭터를 기준으로 8방향 각도가 구해진 fTargetRot으로 보간하여 fSprintRot을 구한다.
+                fSprintRot = Mathf.LerpAngle(fSprintRot, fTargetRot, Time.deltaTime * fCharRotSpeed + (fCharRotSpeed * 0.01f));
+                trPlayerModel.rotation = Quaternion.Euler(0.0f, fSprintRot, 0.0f);
+                //}
+                
+                //카메라 줌 인,아웃
+                if(moveState == MoveState.Sprint)
+                {
+                    if(fMoveSpeed > 12.0f)
+                        mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, fSprintFOV, Time.deltaTime * fFOV_ZoomSpeed);
+                }            
+                else
+                {
+                    mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, fOrizinFOV, Time.deltaTime * fFOV_ZoomSpeed);
+                } 
 
                 fMoveSpeed = Mathf.Lerp(fMoveSpeed, fMaxMoveSpeed, Time.deltaTime * fMoveSpeedDamp);
-                //transform.Translate(moveDir.normalized * Time.deltaTime * fMoveSpeed, Space.Self);
-                //moveDir.y -= 20.0f * Time.deltaTime;
+
                 moveDir = transform.TransformDirection(moveDir);
                 controller.Move(moveDir * fMoveSpeed * Time.deltaTime);
             }
@@ -304,4 +317,5 @@ public class T_MoveCtrl : MonoBehaviour {
     public MoveState GetMoveState() { return moveState; }
     public void SetMoveState(MoveState val) { moveState = val; }
     public MoveFlag GetMoveFlag() { return moveFlag;    }
+    public float GetMoveSpeed() { return fMoveSpeed; }
 } 

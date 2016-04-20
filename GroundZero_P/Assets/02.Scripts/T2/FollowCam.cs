@@ -17,6 +17,9 @@ public class FollowCam : MonoBehaviour {
 
     private float fAimOutLerpSpeed = 2.0f;
 
+    //초기화 변수
+    public float fMouseRotSpeed = 200.0f;
+
 
     void Start () {
         fDist = DIST;
@@ -53,16 +56,16 @@ public class FollowCam : MonoBehaviour {
         //transform.position = Vector3.Lerp(transform.position, trTarget.position - (trTarget.forward * fDist) + (transform.right * RIGHT),
         //    Time.deltaTime * DAMP_TRACE);
 
-        transform.position = trTarget.position - (trTarget.forward * fDist) + (transform.right * RIGHT);
+        transform.position = trTarget.position - (trTarget.forward * DIST) + (transform.right * RIGHT);
 
-        transform.LookAt((trTarget.position + (trTarget.right * fRight)));
+        transform.LookAt((trTarget.position + (trTarget.right * RIGHT)));
     }
 
     public void SetDampTrace(float f) { fDampTrace = f; }
     public float GetDampTrace() { return fDampTrace; }
-    public void SetDist(float f) { fDist = f; }
-    public float GetDist() { return fDist; }
-    public void SetRight(float f) { fRight = f; }
-    public float GetRight() { return fRight; }
+    public void SetDist(float f) { DIST = f; }
+    public float GetDist() { return DIST; }
+    public void SetRight(float f) { RIGHT = f; }
+    public float GetRight() { return RIGHT; }
 
 }

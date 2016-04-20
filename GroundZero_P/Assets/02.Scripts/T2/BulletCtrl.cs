@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BulletCtrl : MonoBehaviour {
 
-    private float fSpeed;
+    public float fSpeed = 100.0f;
 
     public float lifeTime = 3.0f;
 
@@ -13,7 +13,6 @@ public class BulletCtrl : MonoBehaviour {
 
     void Awake()
     {
-        fSpeed = 100.0f;
         t_Attack = GameObject.FindGameObjectWithTag(Tags.Player).GetComponent<T_Attack>();
     }
 

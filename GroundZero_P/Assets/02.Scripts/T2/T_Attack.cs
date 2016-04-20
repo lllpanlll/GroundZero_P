@@ -11,6 +11,8 @@ public class T_Attack : MonoBehaviour
     public GameObject oFlarePref;
     private GameObject oFlare;
     private ObjectPool flarePool = new ObjectPool();
+    
+    public MeshRenderer muzzleFlash;
 
     public Transform trFire;
 
@@ -21,13 +23,13 @@ public class T_Attack : MonoBehaviour
     //타이머 변수
     private bool bFire = false;
     private float attackTimer = 0.0f;
-    private float attackTime = 0.5f;
+    private float attackTime = 0.3f;
 
     private float fReach = 1000.0f;
 
     //연사속도 타이머
-    private float fRpmSpeed = 0.4f;
-    private float fRpmTime = 0.2f;
+    private float fRpmSpeed = 0.1f;
+    private float fRpmTime;
     private float fRpmTimer = 0.0f;
 
     //RapidMode 타이머
@@ -35,9 +37,18 @@ public class T_Attack : MonoBehaviour
     private float fRapidTime = 2.0f;
     private float fRapidTimer = 0.0f;
 
+    //카메라 줌인
+    private Camera cam;
+    private FollowCam followCam;
+    private float fCamDist = 0.0f;
+    private float fOrizinDist;
+    public float fTargetDist = 1.0f;
+    public float fZoomSpeed = 20.0f;
+    
     private int iMaxMagazine;
-
+    //집탄율..?
     private float fAccuracy = 0.1f;
+    private bool bFirstShot = true;
 
     void Start()
     {       
@@ -46,10 +57,15 @@ public class T_Attack : MonoBehaviour
         t_MoveCtrl = GetComponent<T_MoveCtrl>();
         t_Mgr = GetComponent<T_Mgr>();
         trPlayerModel = GameObject.FindGameObjectWithTag(Tags.PlayerModel).transform;
+        cam = Camera.main;
+        followCam = cam.GetComponent<FollowCam>();
+        fOrizinDist = followCam.GetDist();
+        fCamDist = followCam.GetDist();
 
         bulletPool.CreatePool(oBulletPref, iMaxMagazine);
         flarePool.CreatePool(oFlarePref, iMaxMagazine * 2);
 
+        muzzleFlash.enabled = false;
     }
 
     void Update()
@@ -57,29 +73,42 @@ public class T_Attack : MonoBehaviour
         if (t_Mgr.GetCtrlPossible().Attack == false)
         {
             bFire = false;
+            attackTimer = 0.0f;
             return;
         }else if (Input.GetMouseButton(0))
         {
 
             //플레이어를 정면을 바라보게 한다.
             float CamRot = Camera.main.transform.eulerAngles.y;
-            transform.rotation = Quaternion.Euler(0.0f, CamRot, 0.0f);
+            transform.rotation = Quaternion.Euler(0.0f, CamRot+15.0f, 0.0f);
             trPlayerModel.rotation = transform.rotation;
 
             //첫 공격시에는 바로 공격 가능하고, 그 다음부터 연사 속도 적용.
-            if (!bFire)
+            //if (!bFire)
+            if(bFirstShot || !bFire)
                 fRpmTime = 0.0f;
             else
                 fRpmTime = fRpmSpeed;
+
+            bFirstShot = false;
 
             //연사속도 조절.
             if (fRpmTimer > fRpmTime)
             {
                 Fire();
+                bFire = true;
                 fRpmTimer = 0.0f;
             }
             else
                 fRpmTimer += Time.deltaTime;
+        }
+
+        if(Input.GetMouseButtonUp(0))
+        {
+            fRpmTime = 0.0f;
+            //bFire = false;
+            bFirstShot = true;
+            attackTimer = 0.0f;
         }
         
         //공격하면 플레이어 이동상태를 일정 시간 동안 변경.
@@ -104,39 +133,50 @@ public class T_Attack : MonoBehaviour
             {
                 attackTimer += Time.deltaTime;
             }
+
+            //카메라 줌인
+            fCamDist = Mathf.Lerp(fCamDist, fTargetDist, Time.deltaTime * fZoomSpeed);
+            followCam.SetDist(fCamDist);
+
+        }
+        else
+        {
+            //카메라 줌아웃
+            fCamDist = Mathf.Lerp(fCamDist, fOrizinDist, Time.deltaTime * fZoomSpeed * 0.2f);
+            followCam.SetDist(fCamDist);
         }
 
         #region<RapidMode>
-        //캐릭터가 멈춰있고, 기본사격중일 경우.
-        if (t_MoveCtrl.GetMoveState() == T_MoveCtrl.MoveState.Stop && bFire)
-        {
-            if (fRapidTimer > fRapidTime)
-            {
-                print("rapid");
-                bRapidMode = true;
-                fRapidTimer = 0.0f;
-            }
-            else
-            {
-                fRapidTimer += Time.deltaTime;
-            }
-        }
-        //캐릭터가 stop상태가 아니게 되면 다시 일반 모드로 돌아가도록.
-        else
-            bRapidMode = false;
+        ////캐릭터가 멈춰있고, 기본사격중일 경우.
+        //if (t_MoveCtrl.GetMoveState() == T_MoveCtrl.MoveState.Stop && bFire)
+        //{
+        //    if (fRapidTimer > fRapidTime)
+        //    {
+        //        print("rapid");
+        //        bRapidMode = true;
+        //        fRapidTimer = 0.0f;
+        //    }
+        //    else
+        //    {
+        //        fRapidTimer += Time.deltaTime;
+        //    }
+        //}
+        ////캐릭터가 stop상태가 아니게 되면 다시 일반 모드로 돌아가도록.
+        //else
+        //    bRapidMode = false;
 
-        if (bRapidMode)
-        {
-            fRpmSpeed = 0.05f;
-        }
-        else
-            fRpmSpeed = 0.4f;
+        //if (bRapidMode)
+        //{
+        //    fRpmSpeed = 0.05f;
+        //}
+        //else
+        //    fRpmSpeed = 0.4f;
         #endregion
     }
     
     public void Fire()
     {
-        bFire = true;
+        //bFire = true;
         attackTimer = 0.0f;        
 
         Transform camTr = Camera.main.transform;
@@ -168,9 +208,6 @@ public class T_Attack : MonoBehaviour
             //레이에 부딪힌 오브젝트가 있으면 부딪힌 위치를 바라보도록 방향 조정.
             trFire.transform.LookAt(fTarget);
 
-            /*머즐플래쉬 코드 작성 위치*/
-
-
            //aimRayHit.point가 사정거리 이내에 위치할 경우.
             if (fRangeCheck < fReach)
             {
@@ -186,7 +223,8 @@ public class T_Attack : MonoBehaviour
             fTarget = new Vector3(fTarget.x,
                                   Random.Range(fTarget.y - fAccuracy, fTarget.y + fAccuracy),
                                   Random.Range(fTarget.z - fAccuracy, fTarget.z + fAccuracy));
-            trFire.GetComponent<TargetLookAt>().TargetLookat(fTarget);
+            //trFire.GetComponent<TargetLookAt>().TargetLookat(fTarget);
+            trFire.LookAt(fTarget);
         }
 
         //투사체 오브젝트 풀 생성.    
@@ -194,6 +232,22 @@ public class T_Attack : MonoBehaviour
         oBullet.transform.position = trFire.position;
         oBullet.transform.rotation = trFire.rotation;
 
+        //머즐플래시
+        this.StartCoroutine(ShowMuzzleFlash());
+
+    }
+
+    public void TargetFire(Quaternion rot)
+    {
+        trFire.rotation = rot;
+
+        //투사체 오브젝트 풀 생성.    
+        oBullet = bulletPool.UseObject();
+        oBullet.transform.position = trFire.position;
+        oBullet.transform.rotation = trFire.rotation;
+
+        //머즐플래시
+        this.StartCoroutine(ShowMuzzleFlash());
     }
 
     public bool isFire() { return bFire; }
@@ -202,5 +256,20 @@ public class T_Attack : MonoBehaviour
     {
         oFlare = flarePool.UseObject();
         oFlare.transform.position = pos;
+    }
+
+    IEnumerator ShowMuzzleFlash()
+    {
+        float scale = Random.Range(1.0f, 1.5f);
+        muzzleFlash.transform.localScale = Vector3.one * scale;
+
+        Quaternion rot = Quaternion.Euler(0, 0, Random.Range(0, 360));
+        muzzleFlash.transform.localRotation = rot;
+
+        muzzleFlash.enabled = true;
+
+        yield return new WaitForSeconds(Random.Range(0.05f, 0.008f));
+
+        muzzleFlash.enabled = false;
     }
 }
