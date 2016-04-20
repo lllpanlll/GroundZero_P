@@ -164,13 +164,11 @@ public class T_SeventhFlow : T_SkillMgr
         {
             //레이에 부딪힌 오브젝트가 있으면 부딪힌 위치를 바라보도록 타겟 조정.
             vTargetPos = aimRayHit.point;
-            print(aimRayHit.point);
         }
         else
         {
             //레이에 부딪힌 오브젝트가 없다면 최대 사거리 지점을 바라보도록 타겟 조정.
             vTargetPos = aimRay.GetPoint(fReach);
-            print(aimRay.GetPoint(fReach));
         }       
 
         StartAction();        
@@ -221,6 +219,8 @@ public class T_SeventhFlow : T_SkillMgr
         {
             controller.Move(moveDir * Time.deltaTime * blinkSpeed);
 
+            trCamPivot.LookAt(vTargetPos);
+
             if (timeConunt > (time * 0.75) && !bAfterImageOn)
             {
                 bAfterImageOn = true;
@@ -244,7 +244,7 @@ public class T_SeventhFlow : T_SkillMgr
     {
         //모델과 카메라 방향을 타겟 위치로 회전시킨다.
         oPlayerModel.transform.LookAt(vTargetPos);
-        trCamPivot.LookAt(vTargetPos);
+        //trCamPivot.LookAt(vTargetPos);
         trFire.LookAt(vTargetPos);
         oPlayerModel.transform.rotation = Quaternion.Euler(0.0f, oPlayerModel.transform.eulerAngles.y, 0.0f);        
 

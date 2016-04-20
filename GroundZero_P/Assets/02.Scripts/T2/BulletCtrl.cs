@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BulletCtrl : MonoBehaviour {
 
-    public float fSpeed = 100.0f;
+    public float fSpeed = 300.0f;
 
     public float lifeTime = 3.0f;
 
