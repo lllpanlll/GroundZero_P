@@ -52,6 +52,7 @@ public class RotationPivotOfCam : MonoBehaviour {
                 fAngleY = transform.rotation.eulerAngles.x;
 
             fAngleX = transform.rotation.eulerAngles.y;
+
         }
         
         Debug.DrawRay(transform.position, transform.forward);

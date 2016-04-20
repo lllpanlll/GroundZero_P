@@ -29,8 +29,8 @@ public class T_SeventhFlow : T_SkillMgr
     private float afterDelayTime = 0.0f;
     private float coolTime = 0.0f;
 
-    private float blinkTime = 0.15f;
-    private float blinkDist = 10f;
+    private float blinkTime = 0.25f;
+    private float blinkDist = 8f;
     private float blinkSpeed;
 
     //고유 스킬 사용 파라미터
@@ -64,7 +64,7 @@ public class T_SeventhFlow : T_SkillMgr
 
         blinkSpeed = blinkDist / blinkTime;
 
-        afterModelPool.CreatePool(oAfterModelPref, 5);
+        afterModelPool.CreatePool(oAfterModelPref, 30);
 
         base.SetCoolTime(this.coolTime);
 
@@ -159,17 +159,18 @@ public class T_SeventhFlow : T_SkillMgr
         //레이어 마스크 ignore처리 (-1)에서 빼 주어야 함
         int mask = (1 << LayerMask.NameToLayer(Layers.T_HitCollider)) | (1 << LayerMask.NameToLayer(Layers.Bullet));
         mask = ~mask;
-
+        
         if (Physics.Raycast(aimRay, out aimRayHit, fReach, mask))
         {
-            print(aimRayHit.collider.gameObject.tag);
             //레이에 부딪힌 오브젝트가 있으면 부딪힌 위치를 바라보도록 타겟 조정.
             vTargetPos = aimRayHit.point;
+            print(aimRayHit.point);
         }
         else
         {
             //레이에 부딪힌 오브젝트가 없다면 최대 사거리 지점을 바라보도록 타겟 조정.
             vTargetPos = aimRay.GetPoint(fReach);
+            print(aimRay.GetPoint(fReach));
         }       
 
         StartAction();        
@@ -191,7 +192,7 @@ public class T_SeventhFlow : T_SkillMgr
     void StartAction()
     { 
         //플레이어와 캐릭터(모델)를 회전시킬 값을 구한다.
-        float targetRot = transform.eulerAngles.y + moveFlow[iFlow];
+        float targetRot = cam.transform.eulerAngles.y + moveFlow[iFlow];
 
         //캐릭터(모델)를 회전시킨다.
         //transform.rotation = Quaternion.Euler(0.0f, targetRot, 0.0f);
@@ -202,7 +203,7 @@ public class T_SeventhFlow : T_SkillMgr
         //이동시 애니메이션 플레이.
         int iSprintHash = 0;
         iSprintHash = Animator.StringToHash("T2_Sprint");
-        animator.speed = 2.0f;
+        animator.speed = 2.5f;
         animator.Play(iSprintHash);
 
         //이동 코루틴.
@@ -220,7 +221,7 @@ public class T_SeventhFlow : T_SkillMgr
         {
             controller.Move(moveDir * Time.deltaTime * blinkSpeed);
 
-            if (timeConunt >= (time * 0.6) && !bAfterImageOn)
+            if (timeConunt > (time * 0.75) && !bAfterImageOn)
             {
                 bAfterImageOn = true;
                 this.StartCoroutine(AfterImagesDraw());
@@ -243,9 +244,9 @@ public class T_SeventhFlow : T_SkillMgr
     {
         //모델과 카메라 방향을 타겟 위치로 회전시킨다.
         oPlayerModel.transform.LookAt(vTargetPos);
-        trCamPivot.rotation = Quaternion.Euler(oPlayerModel.transform.eulerAngles.x, oPlayerModel.transform.eulerAngles.y, 0.0f); ;
-        oPlayerModel.transform.rotation = Quaternion.Euler(0.0f, oPlayerModel.transform.eulerAngles.y, 0.0f);
+        trCamPivot.LookAt(vTargetPos);
         trFire.LookAt(vTargetPos);
+        oPlayerModel.transform.rotation = Quaternion.Euler(0.0f, oPlayerModel.transform.eulerAngles.y, 0.0f);        
 
         //정지시 애니메이션 플레이.
         int iSprintHash = 0;
@@ -285,7 +286,7 @@ public class T_SeventhFlow : T_SkillMgr
 
         this.StartCoroutine(AfterImageStopDelay(oAfterModel));
 
-        yield return new WaitForSeconds(0.0225f);
+        yield return new WaitForSeconds(0.002f);
         if (i < 4)
         {
             i++;
@@ -297,7 +298,7 @@ public class T_SeventhFlow : T_SkillMgr
 
     IEnumerator AfterImageStopDelay(GameObject obj)
     {
-        yield return new WaitForSeconds(0.002f);
+        yield return new WaitForEndOfFrame();
         obj.GetComponent<Animator>().Stop();
     }
 
