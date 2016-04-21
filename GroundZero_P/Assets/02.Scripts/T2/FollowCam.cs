@@ -37,6 +37,9 @@ public class FollowCam : MonoBehaviour {
         //Debug.DrawRay(rTargetToTargetBackward.origin, (vTargetToCamDir) * fDist, Color.blue);
         RaycastHit hit;
 
+        //Ray rTargetToTargetBackward = new Ray(trTarget.position, (trTarget.position + transform.right * 1f) - trTarget.position);
+        //Debug.DrawLine(trTarget.position, (transform.position + trTarget.right * 1f) - trTarget.position, Color.green);
+
         if (Physics.Raycast(rTargetToTargetBackward, out hit, 5, 1 << 14))
         {
             if (hit.distance < fDist)
@@ -55,7 +58,7 @@ public class FollowCam : MonoBehaviour {
         {
             zoomOutDist = fDist;
         }
-        DIST = Mathf.Lerp(DIST, zoomOutDist, Time.deltaTime * fAimOutLerpSpeed);
+        //DIST = Mathf.Lerp(DIST, zoomOutDist, Time.deltaTime * fAimOutLerpSpeed); //check
         #endregion
 
 
@@ -76,5 +79,6 @@ public class FollowCam : MonoBehaviour {
     public float GetDist() { return DIST; }
     public void SetRight(float f) { RIGHT = f; }
     public float GetRight() { return RIGHT; }
+    public float GetZoom() { return zoomOutDist; } //check
 
 }
