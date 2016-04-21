@@ -17,6 +17,7 @@ TagManager:
   - MONSTER_BODY
   - PLAYER_MODEL
   - Bullet
+  - New Tag
   layers:
   - Default
   - TransparentFX
@@ -32,7 +33,7 @@ TagManager:
   - MON_HITCOL
   - NORMOAL_OBJ
   - BULLET
-  - 
+  - FLOOR
   - 
   - 
   - 

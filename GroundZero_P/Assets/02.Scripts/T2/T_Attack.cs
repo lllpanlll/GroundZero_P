@@ -142,8 +142,8 @@ public class T_Attack : MonoBehaviour
         else
         {
             //카메라 줌아웃
-            fCamDist = Mathf.Lerp(fCamDist, fOrizinDist, Time.deltaTime * fZoomSpeed * 0.2f);
-            followCam.SetDist(fCamDist);
+            //fCamDist = Mathf.Lerp(fCamDist, fOrizinDist, Time.deltaTime * fZoomSpeed * 0.2f);
+            //followCam.SetDist(fCamDist);
         }
 
         #region<RapidMode>
