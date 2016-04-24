@@ -18,7 +18,7 @@ public class UI_Minimap : MonoBehaviour
         float mX = GetMapPos(trPlayer.transform.position.x, mapWidth, sceneWidth);
         float mZ = GetMapPos(trPlayer.transform.position.z, mapHeight, sceneHeight);
 
-        trIconMap.rotation = Quaternion.Euler(0, 0, trCamMain.eulerAngles.y);
+        trIconMap.rotation = Quaternion.Euler(0, 0, -trCamMain.eulerAngles.y);
     }
 
     float GetMapPos(float pos, float mapSize, float sceneSize)
